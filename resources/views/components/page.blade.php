@@ -22,7 +22,10 @@
     <body class="font-sans antialiased dark:bg-black dark:text-white/50 h-full w-full m-0 flex flex-col">
         <x-nav>
             <x-nav-link href="/" :active="request()->is('/')" type="a" >Home</x-nav-link>
-
+            <x-nav-dropdown type="a" href="/projects" :active="request()->is('/projects')">
+                <p>test</p>
+                <p>test</p>
+            </x-nav-dropdown>
             <x-nav-link href="/" :active="request()->is('/')" type="a" >ASM Sim & Learn</x-nav-link>
             <x-nav-link href="/" :active="request()->is('/')" type="a" >Pool & Snooker Simulator</x-nav-link>
             <x-nav-link href="/" :active="request()->is('/')" type="a" >Basic C++ Game Engine</x-nav-link>
@@ -30,7 +33,7 @@
             <x-nav-link href="/" :active="request()->is('/')" type="a" >GPT Discord Bot</x-nav-link>
             <x-nav-link href="/" :active="request()->is('/')" type="a" >Music 2</x-nav-link>
             
-            <x-nav-link href="/contact" :active="request()->is('contact')" type="a">Contact</x-nav-link> 
+            <x-nav-link href="/contact" :active="request()->is('contact')" type="a">Contact</x-nav-link>
             @auth
             <form class="ml-auto" action="/logout" method="POST">
                 @csrf
