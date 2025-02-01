@@ -16,7 +16,7 @@
 
     <!-- Mobile menu, show/hide based on menu state. -->
     <div class="md:hidden" id="mobile-menu">
-        <div class="flex gap-4 px-2 pb-3 pt-2 sm:px-3 items-baseline">
+        <div class="flex gap-4 px-3 pb-3 pt-2 items-baseline">
             <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
             {{ $slot }}
         </div>

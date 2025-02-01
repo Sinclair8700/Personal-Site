@@ -23,10 +23,10 @@
         <x-nav>
 
             <x-nav-link href="/" :active="request()->is('/')" type="a" >Home</x-nav-link>
-            <x-nav-dropdown text="Projects" type="a" href="/projects" :active="request()->is('/projects')">
+            <x-nav-dropdown text="Projects" type="a" href="/projects" :active="request()->is('projects')">
                 
                 @foreach (\App\Models\Project::all() as $project)
-                    <x-nav-link href="/projects/{{ $project->slug }}" :active="request()->is('/projects/' . $project->slug)" type="a" >{{ $project->name }}</x-nav-link>
+                    <x-nav-link href="/projects/{{ $project->slug }}" :active="request()->is('projects/' . $project->slug)" type="a" >{{ $project->name }}</x-nav-link>
                 @endforeach
             </x-nav-dropdown>
             
