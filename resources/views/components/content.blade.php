@@ -12,7 +12,7 @@
 
 <div {{ 
     $attributes->merge([
-        'class' => 'w-full ' . $types[$type] . ' mx-auto px-4 sm:px-6 lg:px-8 flex flex-col'
+        'class' => 'w-full ' . $types[$type] . ' mx-auto px-6 flex flex-col'
         ]) 
 }}>
     {{ $slot }}

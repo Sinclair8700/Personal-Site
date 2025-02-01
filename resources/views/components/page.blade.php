@@ -21,19 +21,18 @@
     </head>
     <body class="font-sans antialiased dark:bg-black dark:text-white/50 h-full w-full m-0 flex flex-col">
         <x-nav>
+
             <x-nav-link href="/" :active="request()->is('/')" type="a" >Home</x-nav-link>
-            <x-nav-dropdown type="a" href="/projects" :active="request()->is('/projects')">
-                <p>test</p>
-                <p>test</p>
+            <x-nav-dropdown text="Projects" type="a" href="/projects" :active="request()->is('/projects')">
+                
+                @foreach (\App\Models\Project::all() as $project)
+                    <x-nav-link href="/projects/{{ $project->slug }}" :active="request()->is('/projects/' . $project->slug)" type="a" >{{ $project->name }}</x-nav-link>
+                @endforeach
             </x-nav-dropdown>
-            <x-nav-link href="/" :active="request()->is('/')" type="a" >ASM Sim & Learn</x-nav-link>
-            <x-nav-link href="/" :active="request()->is('/')" type="a" >Pool & Snooker Simulator</x-nav-link>
-            <x-nav-link href="/" :active="request()->is('/')" type="a" >Basic C++ Game Engine</x-nav-link>
-            <x-nav-link href="/" :active="request()->is('/')" type="a" >Fibre Maps</x-nav-link>
-            <x-nav-link href="/" :active="request()->is('/')" type="a" >GPT Discord Bot</x-nav-link>
-            <x-nav-link href="/" :active="request()->is('/')" type="a" >Music 2</x-nav-link>
+            
             
             <x-nav-link href="/contact" :active="request()->is('contact')" type="a">Contact</x-nav-link>
+
             @auth
             <form class="ml-auto" action="/logout" method="POST">
                 @csrf
@@ -43,13 +42,14 @@
             <x-nav-link class="ml-auto" href="/login" :active="request()->is('login')" type="a">Login</x-nav-link>
             <x-nav-link href="/register" :active="request()->is('register')" type="a">Register</x-nav-link>
             @endauth
+
         </x-nav>
-        <header class="bg-gray-200 py-6 shadow-md">
+        <header class="bg-gray-200 py-4 shadow-md">
             <x-content type="wide">
-                <h1 class="text-3xl font-bold tracking-tight text-gray-900">{{ $title }}</h1>
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900">{{ html_entity_decode($title) }}</h1>
             </x-content>
         </header>
-        <main class=" min-w-full pt-8 bg-black flex-[100%] 
+        <main class=" min-w-full py-6 bg-black flex-[100%] 
         [&_h1]:text-white [&_h1]:text-[24px] [&_h1]:leading-[32px] [&_h1]:mb-4
         [&_h2]:text-white [&_h2]:text-[18px] [&_h2]:leading-[24px] [&_h2]:mb-3
         [&_ul]:text-white [&_ul]:text-[16px] [&_ul]:leading-[24px] [&_ul]:mb-4">
