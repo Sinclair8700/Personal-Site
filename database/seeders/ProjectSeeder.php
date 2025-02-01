@@ -63,7 +63,7 @@ class ProjectSeeder extends Seeder
                 'github_link' => '',
             ],
             [
-                'name' => 'Co-production game',
+                'name' => 'Co-production Game',
                 'slug' => 'co-production-game',
                 'description' => 'Co-production game',
                 'github_link' => '',
