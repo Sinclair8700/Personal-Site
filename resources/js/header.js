@@ -55,6 +55,14 @@ Array.from(document.querySelectorAll('.header-dropdown')).forEach((el) =>{
             handle_dropdown_close(el, in_activator, in_dropdown)
         },100)
     })
+    window.addEventListener('touchstart', (e) => {   
+        if (el.querySelector('.dropdown').contains(e.target))
+            return
+        in_dropdown = false
+        dropdown_timeout = setTimeout(() => {
+            handle_dropdown_close(el, in_activator, in_dropdown)
+        },100)
+      });
 
 
 })
