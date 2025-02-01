@@ -68,7 +68,7 @@
                     <li>Java</li>
                     <li>C#</li>
                     <li>Python</li>
-                    <li>JavaScript</li>
+                    <li>JS</li>
                     <li>PHP</li>
                     <li>SQL</li>
                     <li>HTML</li>
