@@ -27,7 +27,7 @@
                             continue;
                         }
                     @endphp
-                    <div class="swiper-slide">
+                    <div class="swiper-slide border-2 border-white">
                         <a href="/projects/{{ $project->slug }}">
                             <img src="{{ Vite::asset('resources/views/projects/projects/'.$project->slug.'/main.png') }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
                         </a>
