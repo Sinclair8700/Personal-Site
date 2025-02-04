@@ -28,8 +28,11 @@
                         }
                     @endphp
                     <div class="swiper-slide border-2 border-white">
-                        <a href="/projects/{{ $project->slug }}">
+                        <a href="/projects/{{ $project->slug }}" class="relative">
                             <img src="{{ Vite::asset('resources/views/projects/projects/'.$project->slug.'/main.png') }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                            <div class="absolute top-0 left-0 w-full h-full bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300 flex items-center justify-center">
+                                <h1 class="text-white text-2xl font-bold">{{ $project->name }}</h1>
+                            </div>
                         </a>
                     </div>
                 @endforeach

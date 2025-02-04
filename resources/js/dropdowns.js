@@ -9,17 +9,15 @@ function handle_dropdown_close(el, in_activator, in_dropdown){
     el.querySelector('.dropdown').classList.add('hidden')
 }
 
-console.log('header.js loaded')
-
-Array.from(document.querySelectorAll('.header-dropdown')).forEach((el) =>{
+Array.from(document.querySelectorAll('.dropdown-container')).forEach((el) =>{
     let in_activator = false
     let in_dropdown = false
     let activator_timeout = null
     let dropdown_timeout = null
-    console.log('header-dropdown found')
+
     el.querySelector('.activator').addEventListener('mouseover', function(){
         in_activator = true
-        console.log('activator mouseover')
+
         if(activator_timeout){
             clearTimeout(activator_timeout)
             activator_timeout = null
@@ -32,7 +30,7 @@ Array.from(document.querySelectorAll('.header-dropdown')).forEach((el) =>{
     })
     el.querySelector('.dropdown').addEventListener('mouseover', function(){
         in_dropdown = true
-        console.log('dropdown mouseover')
+
         if(activator_timeout){
             clearTimeout(activator_timeout)
             activator_timeout = null

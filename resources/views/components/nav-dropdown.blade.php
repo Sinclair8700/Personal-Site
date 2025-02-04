@@ -4,7 +4,7 @@
     'href' => 'javascript:void(0)',
     'active' => false
 ])
-<div class="header-dropdown relative">
+<div class="dropdown-container relative">
     <x-nav-link class="activator" :active="$active" :type="$type" :href="$href">
         {{ $text }}
     </x-nav-link>
