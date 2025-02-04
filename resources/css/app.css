@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+@plugin 'tailwind-scrollbar' {
+  nocompatible: true;
+}
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @theme {
