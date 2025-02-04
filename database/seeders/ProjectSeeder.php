@@ -45,6 +45,12 @@ class ProjectSeeder extends Seeder
                 'github_link' => 'https://github.com/project1',
             ],
             [
+                'name' => 'DevSpeedup',
+                'slug' => 'devspeedup',
+                'description' => 'DevSpeedup',
+                'github_link' => 'https://github.com/project1',
+            ],
+            [
                 'name' => 'Music 2',
                 'slug' => 'music-2',
                 'description' => 'Music 2',
