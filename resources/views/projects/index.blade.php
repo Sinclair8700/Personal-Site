@@ -4,13 +4,13 @@
             @foreach ($projects as $project)
                 <a href="/projects/{{ $project->slug }}">
                 <div class="bg-black ring-1 ring-white rounded-lg flex flex-col xs:flex-row ">
-                    <div class="order-2 xs:order-first w-full xs:w-1/2 p-4 flex-grow-0">
+                    <div class="order-2 xs:order-first w-full xs:w-1/2 p-4 grow-0">
                         <h2 class="text-lg font-bold">{{ $project->name }}</h2>
 
 
 
 
-                        <p class="inline-block text-sm text-gray-500 hyphens-auto whitespace-normal overflow-y-auto overflow-ellipsis flex-[1_2_auto]">{{ $project->description }}</p>
+                        <p class="inline-block text-sm text-gray-500 hyphens-auto whitespace-normal overflow-y-auto text-ellipsis flex-[1_2_auto]">{{ $project->description }}</p>
                     </div>
 
 

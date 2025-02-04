@@ -47,7 +47,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="w-full border-2 border-white px-6 rounded-md">
-                <h1 class="mt-4 !mb-2">Socials</h1>
+                <h1 class="mt-4 mb-2!">Socials</h1>
                 <ul class="list-disc list-inside underline">
                     <li><a href="https://discord.com/invite/w3MqeUnY" target="_blank">Discord</a></li>
                     <li><a href="https://steamcommunity.com/id/a-l-ex" target="_blank">Steam</a></li>
@@ -56,7 +56,7 @@
                 </ul>
             </div>
             <div class="w-full border-2 border-white px-6 rounded-md">
-                <h1 class="mt-4 !mb-2">Hobbies</h1>
+                <h1 class="mt-4 mb-2!">Hobbies</h1>
                 <ul class="list-disc list-inside">
                     <li>Gaming</li>
                     <li>Coding</li>
@@ -65,7 +65,7 @@
                 </ul>
             </div>
             <div class="w-full border-2 border-white px-6 rounded-md">
-                <h1 class="mt-4 !mb-2">Languages</h1>
+                <h1 class="mt-4 mb-2!">Languages</h1>
                 <ul class="list-disc list-inside grid grid-cols-2 md:grid-cols-3">
                     <li>C / C++</li>
                     <li>Java</li>
