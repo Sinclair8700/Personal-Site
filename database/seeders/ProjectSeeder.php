@@ -23,7 +23,7 @@ class ProjectSeeder extends Seeder
             [
                 'name' => 'Pool & Snooker Simulator',
                 'slug' => 'pool-snooker-simulator',
-                'description' => 'A cross platform pool & snooker simulator game with togglable rules and custom game modes. I built this project as a part of my games computing course at university. It uses openframeworks for the graphics and open dynamics engine for physics',
+                'description' => 'A cross platform pool & snooker simulator game with togglable rules and custom game modes. I built this project as a part of my games computing course at university. It uses openframeworks for the graphics and open dynamics engine for physics.',
                 'github_link' => 'https://github.com/project1',
             ],
             [
