@@ -27,11 +27,11 @@
                             continue;
                         }
                     @endphp
-                    <div class="swiper-slide border-2 border-white">
-                        <a href="/projects/{{ $project->slug }}" class="relative">
+                    <div class="swiper-slide border-2 border-white h-full w-full">
+                        <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block">
                             <img src="{{ Vite::asset('resources/views/projects/projects/'.$project->slug.'/main.png') }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
-                            <div class="absolute top-0 left-0 w-full h-full bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300 flex items-center justify-center">
-                                <h1 class="text-white text-2xl font-bold">{{ $project->name }}</h1>
+                            <div class="absolute top-0 bottom-0 left-0 right-0 bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300">
+                                <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-2xl font-bold text-center">{{ $project->name }}</h1>
                             </div>
                         </a>
                     </div>
