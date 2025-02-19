@@ -192,12 +192,13 @@
             </div>
             <div class="w-full border-2 border-white px-6 rounded-md col-span-12 sm:col-span-6 lg:col-span-4">
                 <h1 class="mt-4 [&&]:mb-2">Embedded Systems</h1>
-                <ul class="list-disc list-inside">
+                <ul class="list-disc list-inside grid 2xl:grid-cols-2">
                     <li>Raspberry Pi</li>
                     <li>PICAXE Editor</li>
                     <li>Breadboarding</li>
                     <li>Soldering</li>
                     <li>555 Timer</li>
+                    <li>Assembly</li>
                 </ul>
             </div>
             <div class="w-full border-2 border-white px-6 rounded-md col-span-12 sm:col-span-6 lg:col-span-4">
