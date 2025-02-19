@@ -29,6 +29,13 @@
                     <x-nav-link href="/projects/{{ $project->slug }}" :active="request()->is('projects/' . $project->slug)" type="a" >{{ $project->name }}</x-nav-link>
                 @endforeach
             </x-nav-dropdown>
+
+            <x-nav-dropdown text="Education" type="a" href="/education" :active="request()->is('education')">
+                
+                @foreach (\App\Models\Education::all() as $project)
+                    <x-nav-link href="/education/{{ $project->slug }}" :active="request()->is('education/' . $project->slug)" type="a" >{{ $project->name }}</x-nav-link>
+                @endforeach
+            </x-nav-dropdown>
             
             
             <x-nav-link href="/contact" :active="request()->is('contact')" type="a">Contact</x-nav-link>
