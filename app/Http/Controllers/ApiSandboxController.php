@@ -24,7 +24,7 @@ class ApiSandboxController extends Controller
 
         $messages = Cache::get('sandbox_messages_' . $temporary_token, []);
 
-        return view('projects.api-sandbox.index', ['title' => 'API Sandbox', 'temporary_token' => $temporary_token, 'messages' => $messages]);
+        return view('api-sandbox.index', ['title' => 'API Sandbox', 'temporary_token' => $temporary_token, 'messages' => $messages]);
     }
 
 

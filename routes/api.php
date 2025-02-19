@@ -5,9 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiSandboxMessageController;
 use App\Http\Middleware\PersistApiSandboxToken;
 
-Route::post('/message', [ApiSandboxMessageController::class, 'store'])->middleWare([PersistApiSandboxToken::class]);
+Route::controller(ApiSandboxMessageController::class)->group(function () {
+    Route::post('/message', 'store')->middleware([PersistApiSandboxToken::class])->name('api-sandbox.api.message.store');
 
-Route::get('/message', [ApiSandboxMessageController::class, 'index'])->middleWare([PersistApiSandboxToken::class]);
+    Route::get('/message', 'index')->middleware([PersistApiSandboxToken::class])->name('api-sandbox.api.message.index');
+});
 
 
 Route::get('/user', function (Request $request) {

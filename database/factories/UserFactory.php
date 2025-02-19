@@ -16,6 +16,15 @@ class UserFactory extends Factory
      */
     protected static ?string $password;
 
+
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role_id' => 1,
+        ]);
+    }
+
     /**
      * Define the model's default state.
      *
@@ -29,6 +38,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role_id' => 2,
         ];
     }
 
