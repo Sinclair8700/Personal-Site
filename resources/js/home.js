@@ -12,6 +12,7 @@ const swiper = new Swiper('.swiper', {
     direction: 'horizontal',
     loop: true,
     speed: 2000,
+    slidesPerView: 1,
     autoplay: {
         
         delay: 2500,
@@ -37,4 +38,15 @@ const swiper = new Swiper('.swiper', {
             slidesPerView: 2,
         },
     },
+    on: {
+        init: function () {
+            setTimeout(() => {
+                document.querySelectorAll('.swiper-slide').forEach(function (slide) {
+                    slide.classList.remove('[&:not(.swiper-slide-active)]:hidden');
+                    slide.classList.remove('md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden');
+                });
+                this.update();
+            }, 100);
+        }
+    }
 });
