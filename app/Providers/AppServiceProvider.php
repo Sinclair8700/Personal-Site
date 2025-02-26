@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        config(['app.login_route' => 'account.sign-in']);
+        config(['app.register_route' => 'account.sign-up']);
     }
 }
