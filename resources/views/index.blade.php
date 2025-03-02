@@ -72,7 +72,7 @@
                     </li>
                     <li><a class="underline" href="https://steamcommunity.com/id/a-l-ex" target="_blank">Steam</a></li>
                     <li><a class="underline" href="https://github.com/Sinclair8700" target="_blank">Github</a></li>
-                    <li><a href="https://www.linkedin.com/in/alex-davies-aa10a7215/" target="_blank">LinkedIn</a></li>
+                    <li><a class="underline" href="https://www.linkedin.com/in/alex-davies-aa10a7215/" target="_blank">LinkedIn</a></li>
                 </ul>
             </x-bubble>
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
