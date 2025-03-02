@@ -81,7 +81,7 @@
                     <li>Gaming</li>
                     <li>Coding</li>
                     <li>Pool</li>
-                    <li>Driving fast</li>
+                    <li>Sim Racing</li>
                 </ul>
             </x-bubble>
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
