@@ -4,8 +4,6 @@ import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
 
-console.log('home.js');
-
 const swiper = new Swiper('.swiper', {
     modules: [Navigation, Pagination, Autoplay],
     // Optional parameters
