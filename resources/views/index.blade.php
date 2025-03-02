@@ -64,7 +64,7 @@
                     Socials
                 </h3>
                 <ul class="list-disc list-inside">
-                    <li><span class="underline copy-value" data-value="alex_8700">Discord
+                    <li><span class="underline cursor-pointer copy-value" data-value="alex_8700">Discord
                             <x-popover position="bottom">
                                 Click to copy tag
                             </x-popover>
