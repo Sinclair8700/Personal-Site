@@ -55,6 +55,8 @@
         </script>
     </head>
     <body id="body" class="font-sans antialiased dark:bg-black dark:text-white/50 h-full w-full m-0 flex flex-col relative">
+        <!--FOUC fix-->
+        <script>0</script>
         <x-nav>
 
             <x-nav-link href="/" :active="request()->is('/')" type="a" >Home</x-nav-link>
