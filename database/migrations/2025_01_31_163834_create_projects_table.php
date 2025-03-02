@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('description');
-            $table->string('github_link');
+            $table->string('link')->nullable();
             $table->timestamps();
         });
     }

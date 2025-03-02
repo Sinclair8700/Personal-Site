@@ -16,25 +16,24 @@
                 [&_.swiper-slide]:min-h-full
                 [&_.swiper-slide]:aspect-video
                 [&_.swiper-slide]:shrink-0
-                [&_.swiper-slide]:bg-white
-                [&_.swiper-slide]:rounded-md
+                [&_.swiper-slide]:bg-transparent
+                
                 [&_.swiper-slide]:overflow-hidden
                 [&_.swiper-slide]:shadow-md
-                [&_.swiper-slide]:transition-all
                 [&_.swiper-slide]:duration-300
                 [&_.swiper-slide]:ease-in-out
                 ">
                     @foreach (\App\Models\Project::all() as $project)
                         @php
-                            $image = base_path('/resources/views/projects/projects/'.$project->slug.'/main.png');
-                            if(!file_exists($image)){
+                            $imageExists = Storage::disk('public')->exists('projects/'.$project->slug.'/main.png');
+                            if(!$imageExists){
                                 continue;
                             }
                         @endphp
-                        <div class="swiper-slide border-2 border-white h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden">
-                            <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block">
+                        <div class="swiper-slide    h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden">
+                            <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
                                 <img 
-                                    src="{{ Vite::asset('resources/views/projects/projects/'.$project->slug.'/main.png') }}" 
+                                    src="{{ asset('storage/projects/'.$project->slug.'/main.png') }}" 
                                     alt="{{ $project->name }}" 
                                     loading="lazy"
                                     class="w-full h-full object-cover">
@@ -61,9 +60,16 @@
         </div>-->
         <div class="grid grid-cols-12 gap-6">
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
-                <h3>Socials</h3>
+                <h3>
+                    Socials
+                </h3>
                 <ul class="list-disc list-inside">
-                    <li><a class="underline" href="https://discord.com/invite/w3MqeUnY" target="_blank">Discord</a></li>
+                    <li><span class="underline copy-value" data-value="alex_8700">Discord
+                            <x-popover position="bottom">
+                                Click to copy tag
+                            </x-popover>
+                        </span>
+                    </li>
                     <li><a class="underline" href="https://steamcommunity.com/id/a-l-ex" target="_blank">Steam</a></li>
                     <li><a class="underline" href="https://github.com/Sinclair8700" target="_blank">Github</a></li>
                     <li><a href="https://www.linkedin.com/in/alex-davies-aa10a7215/" target="_blank">LinkedIn</a></li>

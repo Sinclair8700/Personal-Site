@@ -4,7 +4,8 @@ function addPaddingToTextBoxes() {
         let text = textBox.textContent;
         let textHeight = textBox.scrollHeight;
         let boxHeight = textBox.clientHeight;
-        if (textHeight > boxHeight) {
+
+        if (boxHeight > 0 && textHeight > boxHeight) {
             textBox.style.paddingRight = '16px';
         }
         else {

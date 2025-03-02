@@ -14,6 +14,8 @@
   --breakpoint-xs: 540px;
   --breakpoint-3xl: 1920px;
   --breakpoint-4xl: 2560px;
+
+  --color-purple: var(--color-indigo-600)
 }
 
 /*

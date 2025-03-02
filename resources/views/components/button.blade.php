@@ -16,7 +16,7 @@
     {{ $slot }}
 </a>
 @else
-<button {{ $type === 'submit' ? 'type="submit"' : '' }} {{ $attributes->merge(['class' => $classes[$tier] ]) }}>
+<button {{ $type === 'submit' ? 'type=submit' : '' }} {{ $attributes->merge(['class' => $classes[$tier] ]) }}>
     {{ $slot }}
 </button>
 @endif

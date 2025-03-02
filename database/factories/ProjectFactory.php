@@ -38,13 +38,13 @@ class ProjectFactory extends Factory
         $name = fake()->name(); 
         $slug = Str::slug($name);
         $description = fake()->sentence();
-        $github_link = fake()->url();
+        $link = fake()->url();
 
         return [
             'name' => $name,
             'slug' => $slug,
             'description' => $description,
-            'github_link' => $github_link,
+            'link' => $link
             //
         ];
     }

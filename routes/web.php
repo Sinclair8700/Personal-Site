@@ -12,8 +12,15 @@ Route::get('/', function () {
     return view('index', ['title' => 'Home']);
 })->name('index');
 
-Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-Route::get('/projects/{slug}', [ProjectController::class, 'show'])->name('projects.show');
+Route::controller(ProjectController::class)->group(function () {
+    Route::get('/projects', 'index')->name('projects.index');
+    Route::get('/projects/{slug}', 'show')->name('projects.show');
+    Route::get('/projects/create', 'create')->name('projects.create');
+    Route::post('/projects', 'store')->name('projects.store');
+    Route::get('/projects/{slug}/edit', 'edit')->name('projects.edit');
+    Route::put('/projects/{slug}', 'update')->name('projects.update');
+    Route::delete('/projects/{slug}', 'destroy')->name('projects.destroy');
+});
 
 Route::get('/education', [EducationController::class, 'index'])->name('education.index');
 Route::get('/education/{slug}', [EducationController::class, 'show'])->name('education.show');

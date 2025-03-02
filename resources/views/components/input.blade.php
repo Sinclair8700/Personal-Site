@@ -1,16 +1,38 @@
 @props([
     'name' => null,
+    'type' => 'text',
+    'files' => [],
+    'file' => null,
 ])
 
-<div>
-    <label for="salary" class="block text-sm/6 font-medium text-gray-900">{{ $slot }}</label>
+<div class="flex flex-col gap-1">
+    <label for="{{ $name }}" class=" text-sm/6 font-medium text-white">{{ $slot }}</label>
 
-    <div
-        class="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-        <input name="{{ $name }}"
-            {{ $attributes->merge(['class' => 'block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6']) }}>
+    <x-bubble
+        class="{{ $type == 'file' ? 'relative h-24 max-h-24 overflow-hidden group' : '' }} rounded-md bg-transparent [&]:px-0 [&]:py-0">
 
-    </div>
+        @if($type == 'file')
+            <div class="absolute top-2 left-3 w-full h-full pointer-events-none text-white text-sm/6 choose-file opacity-100 group-[:has(.file-uploads_img)]:opacity-0 transition-opacity">
+                Choose file...
+            </div>
+            <div class="absolute w-full h-full pointer-events-none text-white text-sm/6 file-uploads flex items-center justify-center">      
+                @if($file)
+                    <img data-file-id="{{ $file }}" src="{{ $file }}" class="pointer-events-none w-full h-full object-cover">
+                @elseif($files)
+                    @foreach($files as $index => $file)  
+                        <img data-file-id="{{ $index }}" src="{{ $file }}" class="pointer-events-none w-full h-full object-cover">
+                    @endforeach
+                @endif
+
+            </div>
+        @endif
+
+        @if($type == 'textarea')
+            <textarea name="{{ $name }}"  {{ $attributes->merge(['class' => 'block min-w-0 w-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 h-[92px]']) }}>{{ $attributes->get('value') }}</textarea>
+        @else
+            <input name="{{ $name }}" type="{{ $type }}" {{ $attributes->merge(['class' => ($type == 'file' ? 'opacity-0' : '') . ' block min-w-0 w-full h-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6']) }}/>
+        @endif
+    </x-bubble>
     @error($name)
         <p class="text-red-500">{{ $message }}</p>
     @enderror

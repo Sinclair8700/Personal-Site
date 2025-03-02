@@ -11,7 +11,7 @@
                         </div>
 
                         <div class="aspect-square w-full xs:w-1/2  ">
-                            <img src="{{ file_exists(base_path('resources/views/projects/projects/' . $project->slug . '/main.png')) ? Vite::asset('resources/views/projects/projects/' . $project->slug . '/main.png') : '' }}"
+                            <img src="{{ asset('storage/projects/' . $project->slug . '/main.png') }}"
                                 alt="{{ $project->name }}"
                                 class="w-full h-full object-cover rounded-t-lg xs:rounded-t-none sm:rounded-r-lg">
                         </div>
