@@ -14,8 +14,8 @@ Route::get('/', function () {
 
 Route::controller(ProjectController::class)->group(function () {
     Route::get('/projects', 'index')->name('projects.index');
-    Route::get('/projects/{slug}', 'show')->name('projects.show');
     Route::get('/projects/create', 'create')->name('projects.create');
+    Route::get('/projects/{slug}', 'show')->name('projects.show');
     Route::post('/projects', 'store')->name('projects.store');
     Route::get('/projects/{slug}/edit', 'edit')->name('projects.edit');
     Route::put('/projects/{slug}', 'update')->name('projects.update');
