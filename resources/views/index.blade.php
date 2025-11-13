@@ -83,11 +83,15 @@
             </x-bubble>
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
                 <h3>Hobbies</h3>
-                <ul class="list-disc list-inside">
+                <ul class="list-disc list-inside grid grid-cols-2 ">
                     <li>Gaming</li>
                     <li>Coding</li>
                     <li>Pool</li>
+                    <li>Electronics</li>
                     <li>Sim Racing</li>
+                    <li>Driving</li>
+                    <li>Fishing</li>
+                    <li>Baking</li>
                 </ul>
             </x-bubble>
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
