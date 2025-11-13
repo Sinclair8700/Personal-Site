@@ -90,10 +90,10 @@
         </x-nav>
         <header class="bg-gray-200 py-4 shadow-md">
             <x-content type="wide">
-                <h1 class="text-3xl font-bold tracking-tight text-gray-900">{{ html_entity_decode($title) }}</h1>
+                <h1 class="tracking-tight text-gray-900">{{ html_entity_decode($title) }}</h1>
             </x-content>
         </header>
-        <main class=" min-w-full py-6 bg-black flex-[100%] 
+        <main class=" min-w-full bg-black flex-[100%] 
         
         
         ">

@@ -1,12 +1,18 @@
 <x-page title={{$title}}>
-    <x-content class="h-full flex flex-col gap-6">
+    <x-content class="h-full flex flex-col gap-6 py-6">
+
+        <x-slot name="leftGutter" class="snow">
+        </x-slot>
+        <x-slot name="rightGutter" class="snow">
+        </x-slot>
+
         <div class="w-full">
-            <h1 class="text-white text-[24px] leading-[32px] mb-4">Welcome!</h1>
-            <h2 class="text-white text-[18px] leading-[24px] mb-3">I'm Alex, a software engineer based in The United Kingdom.</h2>
-            <h2 class="text-white text-[18px] leading-[24px] mb-1">This place is my personal space on the internet where you can find my projects, thoughts and other stuff.</h2>
+            <h2 class="text-white mb-4">Welcome!</h2>
+            <h3 class="text-white mb-3">I'm Alex, a software engineer based in The United Kingdom.</h3>
+            <h3 class="text-white mb-1">This place is my personal space on the internet where you can find my projects, thoughts and other stuff.</h3>
         </div>
         <div class="w-full">
-            <h1 class="text-white text-[24px] leading-[32px] mb-4">Projects</h1>
+            <h2 class="text-white mb-4">Projects</h2>
             <div class="swiper text-white w-full rounded-md aspect-[704/396] md:aspect-[2704/747] ">
                 <div class="
                 rounded-md
@@ -23,7 +29,7 @@
                 [&_.swiper-slide]:duration-300
                 [&_.swiper-slide]:ease-in-out
                 ">
-                    @foreach (\App\Models\Project::all() as $project)
+                    @foreach (\App\Models\Project::all()->shuffle() as $project)
                         @php
                             $imageExists = Storage::disk('public')->exists('projects/'.$project->slug.'/main.png');
                             if(!$imageExists){
@@ -38,7 +44,7 @@
                                     loading="lazy"
                                     class="w-full h-full object-cover">
                                 <div class="absolute top-0 bottom-0 left-0 right-0 bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300">
-                                    <h2 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-2xl font-bold text-center">{{ $project->name }}</h2>
+                                    <h2 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center">{{ $project->name }}</h2>
                                 </div>
                             </a>
                         </div>
@@ -206,6 +212,7 @@
             <x-bubble class=" col-span-12 sm:col-span-6 lg:col-span-4">
                 <h3>Embedded Systems</h3>
                 <ul class="grid 2xl:grid-cols-2">
+                    <li>Arduino</li>
                     <li>Raspberry Pi</li>
                     <li>PICAXE Editor</li>
                     <li>Breadboarding</li>

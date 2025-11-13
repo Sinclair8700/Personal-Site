@@ -31,7 +31,7 @@ class ProjectController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'main_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'link' => 'required|url',
         ]);
 

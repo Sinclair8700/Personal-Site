@@ -1,5 +1,5 @@
 <x-page title={{$title}}>
-    <x-content type="wide">
+    <x-content type="wide" class="py-6">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             @foreach ($education as $item)
                 <a href="/education/{{ $item->slug }}" class="text-white">

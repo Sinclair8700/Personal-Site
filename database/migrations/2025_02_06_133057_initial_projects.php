@@ -73,6 +73,18 @@ return new class extends Migration
             'description' => 'This is my old website that was created as a bit of fun and to get a grasp of animation within css. It is built with html, css and javascript.',
             'link' => ''
         ],
+        [
+            'name' => 'Scenic Routes',
+            'slug' => 'scenic-routes',
+            'description' => 'Meet Scenic Routes: your ticket to leisurely road adventures! Turn every drive into a scenic journey with our intuitive route planning and hidden gem discovery. Whether you\'re meandering through the countryside or cruising along the coast, Scenic Routes makes every mile a memorable experience. Embrace the joy of the open road and let the adventure begin!',
+            'link' => ''
+        ],
+        [
+            'name' => 'Arduino Pi Serial REST API',
+            'slug' => "arduino-pi-serial-rest-api",
+            'description' => "This project started as just an afternoon mess around with an Arduino kit. It started with just messages to the display, then developed into something more. I made some animations. I then figured a buzzer be cool with the animations and why not add dimming for the display. Next I messed with some inputs; displaying the readings from the thumb stick on the display. Then it was time for something more complex, I added the IR censor and an LED then used Arduino code to link the buttons on a remote to different modes on the display. After tinkering for a bit with different modes I remembered I had a Raspberry Pi lying about and interfaced it with the Arduino. To allow them to communicate I made a simple REST API to allow the Arduino to request time updates for the digital clock mode so it never goes out of sync even without a wired in RTC module.",
+            'link' => ""        
+        ]
 
     ];
 

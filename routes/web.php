@@ -14,12 +14,12 @@ Route::get('/', function () {
 
 Route::controller(ProjectController::class)->group(function () {
     Route::get('/projects', 'index')->name('projects.index');
-    Route::get('/projects/create', 'create')->name('projects.create');
+    Route::get('/projects/create', 'create')->middleware('auth')->name('projects.create');
     Route::get('/projects/{slug}', 'show')->name('projects.show');
-    Route::post('/projects', 'store')->name('projects.store');
-    Route::get('/projects/{slug}/edit', 'edit')->name('projects.edit');
-    Route::put('/projects/{slug}', 'update')->name('projects.update');
-    Route::delete('/projects/{slug}', 'destroy')->name('projects.destroy');
+    Route::post('/projects', 'store')->middleware('auth')->name('projects.store');
+    Route::get('/projects/{slug}/edit', 'edit')->middleware('auth')->name('projects.edit');
+    Route::put('/projects/{slug}', 'update')->middleware('auth')->name('projects.update');
+    Route::delete('/projects/{slug}', 'destroy')->middleware('auth')->name('projects.destroy');
 });
 
 Route::get('/education', [EducationController::class, 'index'])->name('education.index');
@@ -27,6 +27,9 @@ Route::get('/education/{slug}', [EducationController::class, 'show'])->name('edu
 
 Route::get('/api-sandbox', [ApiSandboxController::class, 'index'])->name('api-sandbox.index');
 
+Route::get('/physics-paint', function () {
+    return view('physics-paint.index', ['title' => 'Physics Paint']);
+})->name('physics-paint.index');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

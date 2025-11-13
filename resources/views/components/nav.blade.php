@@ -1,8 +1,8 @@
 <nav class="bg-black" >
-    <x-content>
+    <x-content >
         <div class="flex h-16 items-center justify-between w-full">
             <div class="flex items-center w-full">
-                <h1 class="text-2xl font-bold text-white">alexdavi.es</h1>
+                <h2 class="text-white">alexdavi.es</h2>
                 <div class="hidden md:block w-full ml-10">
                     <div class="flex items-baseline justify-start gap-4 w-full">
                         {{ $slot }}
