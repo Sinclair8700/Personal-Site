@@ -7,9 +7,9 @@
         </x-slot>
 
         <div class="w-full">
-            <h2 class="text-white mb-4">Welcome!</h2>
-            <h3 class="text-white mb-3">I'm Alex, a software engineer based in The United Kingdom.</h3>
-            <h3 class="text-white mb-1">This place is my personal space on the internet where you can find my projects, thoughts and other stuff.</h3>
+            <h2 class="text-white mb-4">Hi!</h2>
+            <h3 class="text-white mb-3">You've found my site!</h3>
+            <h3 class="text-white mb-1">This place is my personal space on the internet where I keep track of and show off my projects :)</h3>
         </div>
         <div class="w-full">
             <h2 class="text-white mb-4">Projects</h2>
@@ -72,7 +72,7 @@
                 <ul class="list-disc list-inside">
                     <li><span class="underline cursor-pointer copy-value" data-value="alex_8700">Discord
                             <x-popover position="bottom">
-                                Click to copy tag
+                                Click to copy alex_8700
                             </x-popover>
                         </span>
                     </li>
@@ -84,10 +84,36 @@
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
                 <h3>Hobbies</h3>
                 <ul class="list-disc list-inside grid grid-cols-2 ">
-                    <li>Gaming</li>
-                    <li>Coding</li>
-                    <li>Pool</li>
-                    <li>Electronics</li>
+                    <li>
+                        Gaming
+                        <x-popover position="top">
+                            Mostly Counter Strike, a bit of Minecraft, red alert 2 and battlefield 6. 
+                        </x-popover>
+                    </li>
+                    <li>
+                        Coding
+                        <x-popover position="top">
+                            <p class="max-w-[480px]">
+                                My first interaction with coding was in school IT lessons with Scratch, which I didn't much like. Then I took python classes at lunch time but didn't really enjoy that either. My attachment to coding started with C++ as a hobby when I was 16. My first projects (not on this site :( ) were mostly copy and pasting together bits of other people's code until I got things working. I got quite into creating DirectX 9 GUI frameworks as feedback was very visual and rewarding. Over time I made roughly 6 different GUI frameworks in C++, each repitition broadening my development toolset. I eventually went into University to study Computer Science and now I'm a full stack developer with experience in all of these languages:
+                            </p>
+                            <x-coding-languages />
+                        </x-popover>
+                    </li>
+                    <li>
+                        Pool
+                        <x-popover position="top">
+                            <p>Love it so much I made a game :P</p>
+                            <a class="underline" href="{{ route('projects.show', 'pool-snooker-simulator') }}" target="_blank">take a look</a>
+                        </x-popover>
+                    </li>
+                    <li>
+                        Electronics
+                        <x-popover position="top" >
+                            <p class="max-w-[480px]">
+                                I have a deep love for electronics; My grandad Graham got me into it when I was very young. Almost every time I visited him as a kid he would let me play around with his electronics components and show me projects he was working on.
+                            </p>
+                        </x-popover>
+                    </li>
                     <li>Sim Racing</li>
                     <li>Driving</li>
                     <li>Fishing</li>
@@ -96,17 +122,7 @@
             </x-bubble>
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
                 <h3>Languages</h3>
-                <ul class="list-disc list-inside grid grid-cols-2 md:grid-cols-3">
-                    <li>C / C++</li>
-                    <li>Java</li>
-                    <li>C#</li>
-                    <li>Python</li>
-                    <li>JS</li>
-                    <li>PHP</li>
-                    <li>SQL</li>
-                    <li>HTML</li>
-                    <li>CSS</li>
-                </ul>
+                <x-coding-languages />
             </x-bubble>
             <x-bubble class="col-span-12 sm:col-span-6">
                 <h3>Operating Systems</h3>

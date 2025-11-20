@@ -1,4 +1,4 @@
-<nav class="bg-black" >
+<nav class="bg-black sm:fixed sm:top-0 w-full sm:z-50" >
     <x-content >
         <div class="flex h-16 items-center justify-between w-full">
             <div class="flex items-center w-full">
