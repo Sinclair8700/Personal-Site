@@ -37,7 +37,9 @@
                             }
                         @endphp
                         <div class="swiper-slide    h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden">
-                            <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
+                            <x-project :project="$project"/>
+
+                            {{--  <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
                                 <img 
                                     src="{{ asset('storage/projects/'.$project->slug.'/main.png') }}" 
                                     alt="{{ $project->name }}" 
@@ -46,7 +48,7 @@
                                 <div class="absolute top-0 bottom-0 left-0 right-0 bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300">
                                     <h2 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center">{{ $project->name }}</h2>
                                 </div>
-                            </a>
+                            </a>--}}
                         </div>
                     @endforeach
                 </div>
