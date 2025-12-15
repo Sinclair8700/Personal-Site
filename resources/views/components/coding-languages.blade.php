@@ -1,5 +1,10 @@
 <ul class="list-disc list-inside grid grid-cols-2 md:grid-cols-3">
-    <li>C / C++</li>
+    <li>
+        C / C++
+        <x-popover position="top" class="z-50">
+            {{ "<3" }}
+        </x-popover>
+    </li>
     <li>Java</li>
     <li>C#</li>
     <li>Python</li>
