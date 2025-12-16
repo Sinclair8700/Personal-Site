@@ -48,6 +48,7 @@
                                 <div class="absolute top-0 bottom-0 left-0 right-0 bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300">
                                     <h2 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center">{{ $project->name }}</h2>
                                 </div>
+                                <div class="swiper-lazy-preloader"></div>
                             </a>
                         </div>
                     @endforeach
