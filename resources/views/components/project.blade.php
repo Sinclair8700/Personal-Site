@@ -9,7 +9,7 @@
                 {{ $project->description ?? null }}</p>
         </div>
 
-        <div class="the-image aspect-square w-full">
+        <div class="the-image aspect-square w-full min-w-0">
             <img src="{{ asset('storage/projects/' . ($project->slug ?? null) . '/main.png') }}"
                 alt="{{ $project->name ?? null }}"
                 class="w-full h-full object-cover rounded-t-lg xs:rounded-t-none sm:rounded-r-lg">
