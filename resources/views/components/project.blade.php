@@ -1,5 +1,6 @@
 @props([
-    'project' => null
+    'project' => null,
+    'swiper' => false,
 ])
 <a href="/projects/{{ $project->slug ?? null }}">
     <x-bubble class="max-w-full flex flex-col xs:flex-row h-full xs:aspect-[2/1] [&]:p-0 xs:[&:has(.the-image:hover)_.the-text]:w-0 xs:[&:has(.the-image:hover)_.the-text]:opacity-0 min-w-0">
@@ -10,11 +11,20 @@
         </div>
 
         <div class="the-image aspect-square w-full min-w-0">
-            <img src="{{ asset('storage/projects/' . ($project->slug ?? null) . '/main.png') }}"
+            @if($swiper)
+                <img src="{{ asset('storage/projects/' . ($project->slug ?? null) . '/main.png') }}"
                 alt="{{ $project->name ?? null }}"
                 class="w-full h-full object-cover rounded-t-lg xs:rounded-t-none sm:rounded-r-lg"
                 loading="lazy">
-            <div class="swiper-lazy-preloader"></div>
+                <div class="swiper-lazy-preloader"></div>
+            @else
+                <img src="{{ asset('storage/projects/' . ($project->slug ?? null) . '/main.png') }}"
+                alt="{{ $project->name ?? null }}"
+                class="w-full h-full object-cover rounded-t-lg xs:rounded-t-none sm:rounded-r-lg"
+                loading="lazy">
+            @endif
+
+            
         </div>
     </x-bubble>
 </a>

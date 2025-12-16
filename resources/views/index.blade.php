@@ -37,7 +37,7 @@
                             }
                         @endphp
                         <div class="swiper-slide    h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden overflow-visible">
-                            <x-project :project="$project"/>
+                            <x-project :project="$project" :swiper="true"/>
 
                             {{--  <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
                                 <img 

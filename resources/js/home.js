@@ -19,10 +19,7 @@ const swiper = new Swiper('.swiper', {
     },
     spaceBetween: 24,
 
-    lazy: {
-        loadPrevNext: true,
-        loadPrevNextAmount: 2,
-    },
+    lazy: true,
 
     pagination: {
         el: '.swiper-pagination',
