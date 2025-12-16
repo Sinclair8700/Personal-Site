@@ -5,18 +5,24 @@ import 'swiper/css';
 
 
 const swiper = new Swiper('.swiper', {
-    modules: [Navigation, Pagination, Autoplay],
+    modules: [Navigation, Pagination, Autoplay, Lazy],
     // Optional parameters
     direction: 'horizontal',
     loop: true,
-    speed: 20000000,
+    speed: 2000,
+    effect: 'slide',
     slidesPerView: 1,
     autoplay: {
-        
         delay: 2500,
         pauseOnMouseEnter: true,
+        disableOnInteraction: false,
     },
     spaceBetween: 24,
+
+    lazy: {
+        loadPrevNext: true,
+        loadPrevNextAmount: 2,
+    },
 
     pagination: {
         el: '.swiper-pagination',
