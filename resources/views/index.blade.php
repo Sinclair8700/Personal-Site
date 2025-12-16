@@ -15,7 +15,7 @@
             <h2 class="text-white mb-4">Projects</h2>
             <div class="swiper text-white w-full rounded-md aspect-[704/396] md:aspect-[2704/747] ">
                 <div class="
-                rounded-md
+                rounded-lg
                 swiper-wrapper 
                 [&_.swiper-slide]:w-full 
                 [&_.swiper-slide]:h-full
@@ -36,8 +36,8 @@
                                 continue;
                             }
                         @endphp
-                        <div class="swiper-slide    h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden">
-                            <x-project :project="$project"/>
+                        <div class="swiper-slide    h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden overflow-visible">
+                            <x-project :project="$project" class="border"/>
 
                             {{--  <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
                                 <img 
