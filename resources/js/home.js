@@ -1,5 +1,5 @@
 import Swiper from 'swiper';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay, Lazy } from 'swiper/modules';
 // import Swiper styles
 import 'swiper/css';
 
