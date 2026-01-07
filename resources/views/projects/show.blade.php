@@ -1,4 +1,4 @@
-<x-page title={{$title}}>
+<x-page :title="$title">
     <x-content class="py-6">
         <div class="text-white">
             <div class="w-full md:w-1/2 lg:w-1/3 float-left mr-6 mb-4">

@@ -1,4 +1,4 @@
-<x-page title={{$title}}>
+<x-page :title="$title">
     <x-content type="wide" class="py-6">
         <x-form action="{{ route('projects.update', $project->slug) }}" method="PUT">
 

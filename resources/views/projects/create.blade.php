@@ -1,4 +1,4 @@
-<x-page title={{$title}}>
+<x-page :title="$title">
     <x-content type="wide" class="py-6">
         <x-form action="{{ route('projects.store') }}" method="POST">
             @csrf
