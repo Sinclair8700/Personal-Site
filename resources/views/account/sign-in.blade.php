@@ -7,9 +7,13 @@
         </x-slot>
         <form action="{{ route('login') }}" method="POST">
             @csrf
-            <x-input type="text" name="email" placeholder="Email"/>
-            <x-input type="password" name="password" placeholder="Password"/>
-            <button type="submit">Sign In</button>
+            <x-input type="email" name="email" >
+                Email
+            </x-input>
+            <x-input type="password" name="password" >
+                Password
+            </x-input>
+            <x-button type="submit">Sign Up</x-button>
         </form>
     </x-content>
 </x-page>
