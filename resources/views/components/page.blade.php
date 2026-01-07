@@ -83,8 +83,8 @@
                     <x-nav-link type="button">Logout</x-nav-link>
                 </form>
             @else
-                <x-nav-link class="ml-auto" href="/login" :active="request()->is('login')" type="a">Sign In</x-nav-link>
-                <x-nav-link href="/register" :active="request()->is('register')" type="a">Sign Up</x-nav-link>
+                <x-nav-link class="ml-auto" href="{{ route('login-form') }}" :active="request()->is('login-form')" type="a">Sign In</x-nav-link>
+                <x-nav-link href="{{ route('register-form') }}" :active="request()->is('register-form')" type="a">Sign Up</x-nav-link>
             @endauth 
 
         </x-nav>
