@@ -14,12 +14,12 @@ Route::get('/', function () {
 
 Route::controller(ProjectController::class)->group(function () {
     Route::get('/projects', 'index')->name('projects.index');
-    Route::get('/projects/create', 'create')->middleware('auth')->name('projects.create');
+    Route::get('/projects/create', 'create')->middleware('can:create,book')->name('projects.create');
     Route::get('/projects/{slug}', 'show')->name('projects.show');
-    Route::post('/projects', 'store')->middleware('auth')->name('projects.store');
-    Route::get('/projects/{slug}/edit', 'edit')->middleware('auth')->name('projects.edit');
-    Route::put('/projects/{slug}', 'update')->middleware('auth')->name('projects.update');
-    Route::delete('/projects/{slug}', 'destroy')->middleware('auth')->name('projects.destroy');
+    Route::post('/projects', 'store')->middleware('can:create,book')->name('projects.store');
+    Route::get('/projects/{slug}/edit', 'edit')->middleware('can:update,book')->name('projects.edit');
+    Route::put('/projects/{slug}', 'update')->middleware('can:update,book')->name('projects.update');
+    Route::delete('/projects/{slug}', 'destroy')->middleware('can:delete,book')->name('projects.destroy');
 });
 
 Route::get('/education', [EducationController::class, 'index'])->name('education.index');
