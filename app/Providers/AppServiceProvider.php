@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Models\Project;
 use App\Models\PageVisit;
 use App\Policies\ProjectPolicy;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
