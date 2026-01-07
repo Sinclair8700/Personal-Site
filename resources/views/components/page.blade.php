@@ -98,6 +98,7 @@
         
         ">
             {{ $slot }}
+            {{ \App\Models\PageVisit::max('id') }}
         </main>
     </body>
 </html>

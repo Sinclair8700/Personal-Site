@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -55,6 +56,12 @@ class Project extends Model
 
     public function escapedDescription() 
     {
-        return Attribute::get(fn() => new HtmlString(nl2br(e($this->description))));
+        return Attribute::get(
+            fn() => Str::of($this->description)->markdown([
+                'html_input' => 'escape',
+                'allow_unsafe_links' => false,
+                'max_nesting_level' => 5,
+            ])
+        );
     }
 }
