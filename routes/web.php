@@ -40,7 +40,7 @@ Route::controller(AccountController::class)->group(function () {
     Route::get('/account/sign-in', 'signInForm')->name('login-form');
     Route::post('/account/sign-in', 'signIn')->name('login');
     Route::get('/account/sign-out', 'signOut')->name('logout');
-    Route::get('/account/sign-up', 'signUpForm')->name('register');
+    Route::get('/account/sign-up', 'signUpForm')->name('register-form');
     Route::post('/account/sign-up', 'signUp')->name('register');
 });
 
