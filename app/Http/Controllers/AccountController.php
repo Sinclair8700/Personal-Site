@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Validation\Rules;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
 class AccountController extends Controller
 {
@@ -42,14 +43,13 @@ class AccountController extends Controller
 
     public function signUp(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-            'password_confirmation' => 'required|same:password',
-            'name' => 'required',
+        $data = $request->validate([
+            'email' => 'required|email|unique:users|max:255',
+            'password' => ['required', 'confirmed', 'string', Rules\Password::default()],
+            'name' => 'required|string|max:255',
         ]);
 
-        User::create($request->only('name', 'email', 'password'));
+        User::create($data);
         return redirect()->route('login');
     }
 
