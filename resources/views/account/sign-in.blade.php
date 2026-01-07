@@ -13,7 +13,7 @@
             <x-input type="password" name="password" >
                 Password
             </x-input>
-            <x-button type="submit">Sign Up</x-button>
+            <x-button type="submit">Sign In</x-button>
         </x-form>
     </x-content>
 </x-page>
