@@ -77,15 +77,15 @@
             
             <x-nav-link href="/contact" :active="request()->is('contact')" type="a">Contact</x-nav-link>
 
-            <!-- @auth
-            <form class="ml-auto" action="/logout" method="POST">
-                @csrf
-                <x-nav-link :active="request()->is('logout')" type="button">Logout</x-nav-link>
-            </form>
+            @auth
+                <form class="ml-auto" action="/sign-out" method="POST">
+                    @csrf
+                    <x-nav-link type="button">Logout</x-nav-link>
+                </form>
             @else
-            <x-nav-link class="ml-auto" href="/login" :active="request()->is('login')" type="a">Login</x-nav-link>
-            <x-nav-link href="/register" :active="request()->is('register')" type="a">Register</x-nav-link>
-            @endauth -->
+                <x-nav-link class="ml-auto" href="/login" :active="request()->is('login')" type="a">Sign In</x-nav-link>
+                <x-nav-link href="/register" :active="request()->is('register')" type="a">Sign Up</x-nav-link>
+            @endauth 
 
         </x-nav>
         <header class="bg-gray-200 py-4 shadow-md">
