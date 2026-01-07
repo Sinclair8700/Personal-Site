@@ -93,7 +93,7 @@
                 <h1 class="tracking-tight text-gray-900">{{ html_entity_decode($title) }}</h1>
             </x-content>
         </header>
-        <main class=" min-w-full bg-black flex-[100%] 
+        <main class=" min-w-full bg-black flex-[100%] gap-snake
         
         
         ">
