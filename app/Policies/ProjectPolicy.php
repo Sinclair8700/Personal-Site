@@ -27,10 +27,9 @@ class ProjectPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): Response
+    public function create(User $user): bool
     {
-
-        return ($user->hasRole('admin') ? Response::allow("admin") : Response::allow("not admin"));
+        return $user->hasRole('admin');
     }
 
     /**
