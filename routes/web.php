@@ -16,7 +16,7 @@ Route::controller(ProjectController::class)->group(function () {
     Route::get('/projects', 'index')->name('projects.index');
     Route::get('/projects/create', 'create')->middleware('can:create')->name('projects.create');
     Route::get('/projects/{slug}', 'show')->name('projects.show');
-    Route::post('/projects', 'store')->middleware('can:create,project')->name('projects.store');
+    Route::post('/projects', 'store')->middleware('can:create')->name('projects.store');
     Route::get('/projects/{slug}/edit', 'edit')->middleware('can:update,project')->name('projects.edit');
     Route::put('/projects/{slug}', 'update')->middleware('can:update,project')->name('projects.update');
     Route::delete('/projects/{slug}', 'destroy')->middleware('can:delete,project')->name('projects.destroy');
