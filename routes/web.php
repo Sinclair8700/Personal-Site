@@ -37,11 +37,11 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 Route::controller(AccountController::class)->group(function () {
-    Route::get('/account/sign-in', 'signInForm')->name('login-form');
-    Route::post('/account/sign-in', 'signIn')->name('login');
-    Route::get('/account/sign-out', 'signOut')->name('logout');
-    Route::get('/account/sign-up', 'signUpForm')->name('register-form');
-    Route::post('/account/sign-up', 'signUp')->name('register');
+    Route::get('/sign-in', 'signInForm')->name('login-form');
+    Route::post('/sign-in', 'signIn')->name('login');
+    Route::get('/sign-out', 'signOut')->name('logout');
+    Route::get('/sign-up', 'signUpForm')->name('register-form');
+    Route::post('/sign-up', 'signUp')->name('register');
 });
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
