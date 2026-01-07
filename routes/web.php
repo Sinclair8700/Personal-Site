@@ -14,7 +14,7 @@ Route::get('/', function () {
 
 Route::controller(ProjectController::class)->group(function () {
     Route::get('/projects', 'index')->name('projects.index');
-    Route::get('/projects/create', 'create')->middleware('can:create,project')->name('projects.create');
+    Route::get('/projects/create', 'create')->middleware('can:create')->name('projects.create');
     Route::get('/projects/{slug}', 'show')->name('projects.show');
     Route::post('/projects', 'store')->middleware('can:create,project')->name('projects.store');
     Route::get('/projects/{slug}/edit', 'edit')->middleware('can:update,project')->name('projects.edit');
