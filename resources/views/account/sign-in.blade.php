@@ -5,7 +5,7 @@
         </x-slot>
         <x-slot name="rightGutter" class="snow">
         </x-slot>
-        <form action="{{ route('login') }}" method="POST">
+        <x-form  action="{{ route('login') }}" method="POST">
             @csrf
             <x-input type="email" name="email" >
                 Email
@@ -14,6 +14,6 @@
                 Password
             </x-input>
             <x-button type="submit">Sign Up</x-button>
-        </form>
+        </x-form>
     </x-content>
 </x-page>

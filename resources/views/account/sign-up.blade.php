@@ -6,7 +6,7 @@
         <x-slot name="rightGutter" class="snow">
         </x-slot>
 
-        <form action="{{ route('register') }}" method="POST">
+        <x-form  action="{{ route('register') }}" method="POST">
             @csrf
             <x-input type="text" name="name" >
                 Name
@@ -21,6 +21,6 @@
                 Confirm Password
             </x-input>
             <x-button type="submit">Sign Up</x-button>
-        </form>
+        </x-form>
     </x-content>
 </x-page>
