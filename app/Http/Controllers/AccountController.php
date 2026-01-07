@@ -11,7 +11,7 @@ class AccountController extends Controller
 {
     public function signInForm()
     {
-        return view('account.sign-in');
+        return view('account.sign-in', ['title' => 'Sign In']);
     }
 
     public function signIn(Request $request)
@@ -32,7 +32,7 @@ class AccountController extends Controller
 
     public function signUpForm()
     {
-        return view('account.sign-up');
+        return view('account.sign-up', ['title' => 'Sign Up']);
     }
 
     public function signOut()
