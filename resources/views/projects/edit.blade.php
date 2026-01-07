@@ -5,7 +5,7 @@
             <x-input name="name" value="{{ old('name', $project->name) }}" >
                 Name
             </x-input>
-            <x-input name="description" type="textarea" value="{{ old('description', $project->description) }}" >
+            <x-input name="description" type="textarea" value="{{ old('description', $project->escapedDescription) }}" >
                 Description
             </x-input>
             <x-input type="file" name="main_image" file="{{ asset('storage/projects/'.$project->slug.'/main.png') }}" value="1" >

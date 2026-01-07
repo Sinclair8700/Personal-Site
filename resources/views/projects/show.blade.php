@@ -6,7 +6,7 @@
                     alt="{{ $project->name }}"
                     class="w-full h-auto object-cover rounded-lg">
             </div>
-            <p class="text-justify">{{ $project->description }}</p>
+            <p class="text-justify">{{ $project->escapedDescription }}</p>
             <div class="clear-both"></div>
         </div>
 
