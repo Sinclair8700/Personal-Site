@@ -1,4 +1,4 @@
-<x-page title={{$title}}>
+<x-page :title="$title">
     <x-content class="h-full  flex flex-col items-center justify-center py-6">
         <canvas class="w-full h-full hidden" id="physics-canvas"></canvas>
         <div id="parameters" class="flex flex-col items-center justify-center gap-4">

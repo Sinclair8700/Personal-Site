@@ -1,4 +1,4 @@
-<x-page title={{$title}}>
+<x-page :title="$title">
     <x-content type="wide" class="flex flex-col items-center justify-center gap-6 py-6">
         <div class="flex flex-col items-center justify-center rounded-lg bg-black ring-2 ring-white p-4">
             <p id="token" class="text-white" data-token="{{$temporary_token}}">{{$temporary_token}}</p>

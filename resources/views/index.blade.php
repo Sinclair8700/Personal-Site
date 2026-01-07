@@ -1,4 +1,4 @@
-<x-page title={{$title}}>
+<x-page :title="$title">
     <x-content class="h-full flex flex-col gap-6 py-6">
 
         <x-slot name="leftGutter" class="snow">
@@ -61,12 +61,7 @@
                 <div class="swiper-button-next"></div>
             </div>
         </div>
-        <!--<div class="">
-            <h1 class="mt-4 mb-2!">Bio</h1>
-            <p>
-                I'm a software engineer based in the UK. I'm currently studying Computer Science at the University of York.
-            </p>
-        </div>-->
+
         <div class="grid grid-cols-12 gap-6">
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
                 <h3>
