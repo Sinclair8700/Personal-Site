@@ -3,9 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Project;
-use App\Models\PageVisit;
 use App\Policies\ProjectPolicy;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -36,9 +34,5 @@ class AppServiceProvider extends ServiceProvider
             ->uncompromised()
         );
 
-        PageVisit::create([
-            'ip_address' => Request::ip(),
-            'session' => Request::session()->id,
-        ]);
     }
 }
