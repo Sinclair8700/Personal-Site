@@ -19,6 +19,7 @@ class RecordPageVisit
         'lighthouse', 'pagespeed', 'gtmetrix', 'pingdom', 'uptimerobot',
         'semrush', 'ahrefs', 'mj12bot', 'dotbot', 'rogerbot', 'screaming frog',
         'headless', 'phantom', 'selenium', 'webdriver', 'curl', 'wget', 'python-requests',
+        'apnic', 'ripe', 'arin', 'lacnic', 'afrinic', // Network registry crawlers
     ];
 
     /**
