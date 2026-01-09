@@ -18,9 +18,11 @@ class RecordPageVisit
     {
         $response = $next($request);
 
-        PageVisit::firstOrCreate([
+        PageVisit::insertOrIgnore([
             'ip_address' => $request->ip(),
             'session' => $request->session()?->getId(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return $response;
