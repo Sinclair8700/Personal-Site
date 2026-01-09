@@ -18,7 +18,7 @@ class RecordPageVisit
     {
         $response = $next($request);
 
-        PageVisit::create([
+        PageVisit::firstOrCreate([
             'ip_address' => $request->ip(),
             'session' => $request->session()?->getId(),
         ]);
