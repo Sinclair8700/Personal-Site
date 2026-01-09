@@ -98,7 +98,9 @@
         
         ">
             {{ $slot }}
-            {{ \App\Models\PageVisit::max('id') }}
+            <div class="mx-auto bg-none mt-6">
+                <span class="text-white">Visitors: {{ \App\Models\PageVisit::max('id') }}</span>
+            </div>
         </main>
     </body>
 </html>
