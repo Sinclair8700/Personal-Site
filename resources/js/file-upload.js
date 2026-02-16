@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		// Initialize existing files from data attributes if available
 		const fileContainer = input.parentElement.querySelector('.file-uploads');
 		if (fileContainer) {
-			// Look for existing file elements with data-file-id attributes
-			fileContainer.querySelectorAll('[data-file-id]').forEach(fileEl => {
+			// Look for existing file elements with data-file-id or data-image-id attributes
+			fileContainer.querySelectorAll('[data-file-id], [data-image-id]').forEach(fileEl => {
 				existingServerFiles[inputId].push({
-					id: fileEl.dataset.fileId,
+					id: fileEl.dataset.imageId || fileEl.dataset.fileId,
 					name: fileEl.dataset.fileName || fileEl.title || 'unknown',
 					element: fileEl
 				});
@@ -53,12 +53,21 @@ function addRemoveButton(fileElement, inputId) {
 	removeBtn.addEventListener('click', (e) => {
 		e.preventDefault();
 		
-		// If this is a server file, mark it for deletion
-		const fileId = fileElement.dataset.fileId;
-		if (fileId) {
-			existingServerFiles[inputId] = existingServerFiles[inputId].filter(f => f.id !== fileId);
+		const imageId = fileElement.dataset.imageId;
+		if (imageId) {
+			// Server file: check the corresponding remove_images checkbox so it submits with the form
+			const form = fileElement.closest('form');
+			const checkbox = form?.querySelector(`input.remove-image-checkbox[data-image-id="${imageId}"]`);
+			if (checkbox) {
+				checkbox.checked = true;
+			}
+			existingServerFiles[inputId] = existingServerFiles[inputId].filter(f => f.id !== imageId && f.id !== String(imageId));
 		} else {
-			// If this is a new file, remove it from the array
+			// New file (not yet uploaded): remove from selection
+			const fileId = fileElement.dataset.fileId;
+			if (fileId !== undefined) {
+				existingServerFiles[inputId] = existingServerFiles[inputId].filter(f => f.id !== fileId && f.id !== String(fileId));
+			}
 			const fileName = fileElement.title || fileElement.dataset.fileName;
 			previouslySelectedFiles[inputId] = previouslySelectedFiles[inputId].filter(
 				f => f.name !== fileName

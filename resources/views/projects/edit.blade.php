@@ -15,7 +15,7 @@
             </x-input>
 
             <x-input type="file" name="images[]" multiple
-                :files="$project->images->map(fn($img) => asset('storage/projects/'.$project->slug.'/'.$img->filename))->values()->all()">
+                :files="$project->images->map(fn($img) => ['url' => asset('storage/projects/'.$project->slug.'/'.$img->filename), 'id' => $img->id])->values()->all()">
                 Images (upload order = display priority)
             </x-input>
 
@@ -25,7 +25,7 @@
                     <div class="flex flex-wrap gap-2">
                         @foreach($project->images as $image)
                             <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="rounded">
+                                <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="rounded remove-image-checkbox" data-image-id="{{ $image->id }}">
                                 <img src="{{ asset('storage/projects/'.$project->slug.'/'.$image->filename) }}" alt="" class="w-16 h-16 object-cover rounded">
                                 <span class="text-white text-sm">Remove</span>
                             </label>

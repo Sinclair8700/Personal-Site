@@ -24,6 +24,7 @@ class UpdateProjectRequest extends FormRequest
     {
         $project = $this->route('project');
         $projectImageIds = $project ? $project->images()->pluck('id')->toArray() : [];
+        $allowedIds = array_merge($projectImageIds, array_map('strval', $projectImageIds));
 
         return [
             'name' => 'required|string|max:255',
@@ -32,7 +33,7 @@ class UpdateProjectRequest extends FormRequest
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:8192',
             'link' => 'url|nullable',
             'remove_images' => 'nullable|array',
-            'remove_images.*' => ['integer', Rule::in($projectImageIds)],
+            'remove_images.*' => [Rule::in($allowedIds)],
         ];
     }
 }

@@ -19,8 +19,12 @@
                 @if($file)
                     <img data-file-id="{{ $file }}" src="{{ $file }}" class="pointer-events-none w-full h-full object-cover">
                 @elseif($files)
-                    @foreach($files as $index => $file)  
-                        <img data-file-id="{{ $index }}" src="{{ $file }}" class="pointer-events-none w-full h-full object-cover">
+                    @foreach($files as $index => $file)
+                        @php
+                            $url = is_array($file) ? ($file['url'] ?? $file[0] ?? $file) : $file;
+                            $imageId = is_array($file) ? ($file['id'] ?? $file[1] ?? null) : null;
+                        @endphp
+                        <img data-file-id="{{ $imageId ?? $index }}" data-image-id="{{ $imageId }}" src="{{ $url }}" class="pointer-events-none w-full h-full object-cover">
                     @endforeach
                 @endif
 
