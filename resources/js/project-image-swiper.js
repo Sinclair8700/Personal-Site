@@ -1,6 +1,7 @@
 import Swiper from 'swiper';
-import { Autoplay } from 'swiper/modules';
+import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
+import 'swiper/css/pagination';
 
 function initProjectImageSwipers() {
     document.querySelectorAll('.project-image-swiper').forEach((el) => {
@@ -8,12 +9,16 @@ function initProjectImageSwipers() {
         // Loop needs 3+ slides; with 2, Swiper emits a warning and disables loop anyway
         const canLoop = slideCount >= 3;
         const swiper = new Swiper(el, {
-            modules: [Autoplay],
+            modules: [Autoplay, Pagination],
             direction: 'horizontal',
             loop: canLoop,
             speed: 600,
             slidesPerView: 1,
             spaceBetween: 0,
+            pagination: slideCount > 1 ? {
+                el: '.swiper-pagination',
+                clickable: true,
+            } : false,
             autoplay: slideCount > 1 ? {
                 delay: 3000,
                 disableOnInteraction: false,

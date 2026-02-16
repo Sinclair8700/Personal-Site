@@ -1,0 +1,7 @@
+/* Project image swiper pagination dots */
+.project-image-swiper .swiper-pagination-bullet {
+    background: rgba(255, 255, 255, 0.6);
+}
+.project-image-swiper .swiper-pagination-bullet-active {
+    background: white;
+}

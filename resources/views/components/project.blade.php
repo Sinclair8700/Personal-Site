@@ -25,6 +25,9 @@
                     </div>
                     @endforeach
                 </div>
+                @if($images->count() > 1)
+                <div class="swiper-pagination"></div>
+                @endif
             </div>
         </div>
     </x-bubble>
