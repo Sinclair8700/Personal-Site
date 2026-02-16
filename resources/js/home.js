@@ -1,15 +1,16 @@
 import Swiper from 'swiper';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
+import './project-image-swiper';
 
-const swiper = new Swiper('.swiper', {
-    modules: [Navigation, Pagination, Autoplay],
-    // Optional parameters
+const swiper = new Swiper('.projects-carousel', {
+    modules: [Navigation, Autoplay],
     direction: 'horizontal',
     loop: true,
     speed: 2000,
     effect: 'slide',
     slidesPerView: 1,
+    pagination: false,
     autoplay: {
         delay: 2500,
         pauseOnMouseEnter: true,
@@ -18,16 +19,6 @@ const swiper = new Swiper('.swiper', {
     spaceBetween: 24,
 
     lazy: true,
-
-    pagination: {
-        el: '.swiper-pagination',
-      },
-    
-      // Navigation arrows
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
 
     breakpoints: {
         640: {
@@ -40,7 +31,7 @@ const swiper = new Swiper('.swiper', {
     on: {
         init: function () {
             setTimeout(() => {
-                document.querySelectorAll('.swiper-slide').forEach(function (slide) {
+                this.slides.forEach(function (slide) {
                     slide.classList.remove('[&:not(.swiper-slide-active)]:hidden');
                     slide.classList.remove('md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden');
                 });
