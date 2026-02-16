@@ -1,6 +1,6 @@
 <x-page :title="$title">
     <x-content type="wide" class="py-6">
-        <x-form action="{{ route('projects.store') }}" method="POST">
+        <x-form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data">
 
             <x-input name="name" value="{{ old('name') }}" >
                 Name
@@ -10,12 +10,8 @@
                 Description
             </x-input>
 
-            <x-input type="file" name="main_image" value="1" :file="old('main_image')" >
-                Image
-            </x-input>
-
-            <x-input type="file" name="images[]" :files="old('images')" multiple>
-                Images
+            <x-input type="file" name="images[]" multiple :files="[]">
+                Images (at least one required, order = display priority)
             </x-input>
 
             <x-input name="link" value="{{ old('link') }}" >

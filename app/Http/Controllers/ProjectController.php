@@ -2,95 +2,88 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
-use Illuminate\Http\Request;
+use App\Models\ProjectImage;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class ProjectController extends Controller
 {
-    //
-    public function index(){
-        $projects = Project::all();
+    public function index(): View
+    {
+        $projects = Project::with('images')
+            ->whereHas('images')
+            ->get();
         return view('projects.index', ['title' => 'Projects', 'projects' => $projects]);
     }
 
-    public function show($slug){
-        $project = Project::where('slug', $slug)->first();
+    public function show(Project $project): View
+    {
+        $project->load('images');
 
         return view('projects.show', [
-            'title' => $project->name, 
+            'title' => $project->name,
             'project' => $project
         ]);
     }
 
-    public function create(){
+    public function create(): View
+    {
         return view('projects.create', ['title' => 'Create Project']);
     }
 
-    public function store(Request $request){
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'main_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:8192',
-            'link' => 'required|url',
-        ]);
+    public function store(StoreProjectRequest $request): RedirectResponse
+    {
+        $data = $request->safe()->except('images');
+        $data['slug'] = Str::slug($request->name);
 
-        $data = $request->except('main_image');
-        
-        // Generate a slug from the name
-        $slug = \Str::slug($request->name);
-        $data['slug'] = $slug;
-        
-        // Handle image upload
-        if ($request->hasFile('main_image')) {
-            $file = $request->file('main_image');
-            $filename = 'main.png'; // Standardize filename
-            
-            // Store the file in storage/app/public/projects/{slug}
-            $file->storeAs('projects/'.$slug, $filename, 'public');
-            
-        }
-        
         $project = Project::create($data);
-        return redirect()->route('projects.show', $project->slug);
+        $project->addImages($request->file('images'));
+
+        return redirect()->route('projects.show', $project);
     }
 
-    public function edit($slug){
-        $project = Project::where('slug', $slug)->first();
+    public function edit(Project $project): View
+    {
+        $project->load('images');
         return view('projects.edit', ['title' => 'Edit Project', 'project' => $project]);
     }
 
-    public function update(Request $request, $slug){
-        
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'main_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:8192|nullable',
-            'link' => 'url|nullable',
-        ]);
-        
-        dd($request->all());
-        $project = Project::where('slug', $slug)->first();
-        $data = $request->except('main_image');
-        $project->update($data);
-        
-        // Handle image upload if a new image was provided
-        if ($request->hasFile('main_image')) {
-            $file = $request->file('main_image');
-            $filename = 'main.png'; // Standardize filename
-            
-            // Store the file in storage/app/public/projects/{slug}
-            $file->storeAs('projects/'.$slug, $filename, 'public');
-        }
-        
-        
-        return redirect()->route('projects.show', $project->slug);
+    public function update(UpdateProjectRequest $request, Project $project): RedirectResponse
+    {
+        $project->load('images');
+
+        DB::transaction(function () use ($request, $project) {
+            $project->update($request->safe()->except(['images', 'remove_images']));
+
+            if ($request->filled('remove_images')) {
+                $remainingCount = $project->images->count() - count($request->remove_images);
+                $addingNewImages = $request->hasFile('images') && count(array_filter($request->file('images'))) > 0;
+                if ($remainingCount > 0 || $addingNewImages) {
+                    foreach ($request->remove_images as $imageId) {
+                        $image = ProjectImage::where('project_id', $project->id)->find($imageId);
+                        if ($image) {
+                            $image->delete();
+                        }
+                    }
+                }
+            }
+
+            if ($request->hasFile('images')) {
+                $project->addImages($request->file('images'));
+            }
+        });
+
+        return redirect()->route('projects.show', $project);
     }
 
-    public function destroy($slug){
-        $project = Project::where('slug', $slug)->first();
+    public function destroy(Project $project): RedirectResponse
+    {
         $project->delete();
         return redirect()->route('projects.index');
     }
-    
 }

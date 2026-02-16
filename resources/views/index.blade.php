@@ -29,10 +29,10 @@
                 [&_.swiper-slide]:duration-300
                 [&_.swiper-slide]:ease-in-out
                 ">
-                    @foreach (\App\Models\Project::all()->shuffle() as $project)
+                    @foreach (\App\Models\Project::with('images')->get()->shuffle() as $project)
                         @php
-                            $imageExists = Storage::disk('public')->exists('projects/'.$project->slug.'/main.png');
-                            if(!$imageExists){
+                            $primaryImage = $project->primaryImage();
+                            if(!$primaryImage){
                                 continue;
                             }
                         @endphp
@@ -41,7 +41,7 @@
 
                             <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block xs:hidden border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
                                 <img 
-                                    src="{{ asset('storage/projects/'.$project->slug.'/main.png') }}" 
+                                    src="{{ asset('storage/projects/'.$project->slug.'/'.$primaryImage->filename) }}" 
                                     alt="{{ $project->name }}" 
                                     loading="lazy"
                                     class="w-full h-full object-cover">

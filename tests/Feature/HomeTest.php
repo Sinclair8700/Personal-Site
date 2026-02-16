@@ -2,13 +2,11 @@
 
 use App\Models\Project;
 use function Pest\Laravel\get;
-use Pest\Laravel\AssertableHtml;
 
 it('shows projects on home page', function () {
-    $projects = Project::all();
+    $projects = Project::with('images')->get();
     foreach ($projects as $project) {
-        $image = base_path('/resources/views/projects/projects/'.$project->slug.'/main.png');
-        if(!file_exists($image)){
+        if (!$project->hasImages()) {
             continue;
         }
 
@@ -19,18 +17,17 @@ it('shows projects on home page', function () {
 });
 
 it('only shows projects with images', function () {
-    $projects = Project::all();
+    $projects = Project::with('images')->get();
     foreach ($projects as $project) {
-        $image = base_path('/resources/views/projects/projects/'.$project->slug.'/main.png');
-        if(file_exists($image)){
+        if ($project->hasImages()) {
             continue;
         }
 
-        try{
+        try {
             get(route('index'))
                 ->assertSeeInOrder(['<h1', $project->name, '</h1>'], false);
 
-            $this->fail('Project '.$project->name.' should not be shown');
+            $this->fail('Project ' . $project->name . ' should not be shown');
         } catch (Exception $e) {
             continue;
         }
