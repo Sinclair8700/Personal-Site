@@ -1,6 +1,6 @@
 <x-page :title="$title">
     <x-content type="wide" class="py-6">
-        <x-form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data">
+        <x-form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data" data-native-submit>
 
             <x-input name="name" value="{{ old('name') }}" >
                 Name

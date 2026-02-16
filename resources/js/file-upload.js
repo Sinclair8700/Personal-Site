@@ -4,6 +4,9 @@ let existingServerFiles = {};
 
 document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('input[type="file"]').forEach(input => {
+		const form = input.closest('form');
+		const useNativeSubmit = form?.hasAttribute('data-native-submit');
+
 		const inputId = input.id || 'default';
 		previouslySelectedFiles[inputId] = [];
 		existingServerFiles[inputId] = [];
@@ -26,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		
 		input.addEventListener('change', handleFileSelect);
 		
-		const form = input.closest('form');
-		if (form) {
+		// Only intercept submit for forms that don't use native submission
+		if (form && !useNativeSubmit) {
 			form.addEventListener('submit', (e) => handleFormSubmit(e, input));
 		}
 	});
@@ -124,9 +127,9 @@ function handleFormSubmit(e, fileInput) {
 	const formData = new FormData(form);
 	formData.delete(fileInput.name);
 	
-	// Add all new files
+	// Add all new files (name already includes [] for multiple inputs)
 	previouslySelectedFiles[inputId].forEach(file => {
-		formData.append(fileInput.name + (fileInput.hasAttribute('multiple') ? '[]' : ''), file);
+		formData.append(fileInput.name, file);
 	});
 	
 	// Add list of existing files to keep (those not removed)

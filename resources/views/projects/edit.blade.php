@@ -5,7 +5,7 @@
                 <p class="text-amber-200">{{ session('warning') }}</p>
             </x-bubble>
         @endif
-        <x-form action="{{ route('projects.update', $project) }}" method="PUT" enctype="multipart/form-data">
+        <x-form action="{{ route('projects.update', $project) }}" method="PUT" enctype="multipart/form-data" data-native-submit>
 
             <x-input name="name" value="{{ old('name', $project->name) }}" >
                 Name
