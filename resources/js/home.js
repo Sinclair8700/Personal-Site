@@ -5,7 +5,7 @@ import 'swiper/css/navigation';
 import { initProjectImageSwipers } from './project-image-swiper';
 
 new Swiper('.projects-carousel', {
-    modules: [Navigation, Autoplay],
+    modules: [Autoplay],
     loop: true,
     speed: 2000,
     pagination: false,
