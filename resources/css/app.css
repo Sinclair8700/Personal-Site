@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'project-swipers.css';
 
 @plugin 'tailwind-scrollbar' {
   nocompatible: true;
@@ -19,9 +20,6 @@
 
   --swiper-preloader-color: var(--color-indigo-600);
 }
-
-@import 'project-swipers.css';
-
 
 
 /*
