@@ -25,9 +25,10 @@ class AccountController extends Controller
             if (Auth::attempt($request->only('email', 'password'))) {
                 return redirect()->route('dashboard');
             }
-        
 
-        return view('account.sign-in');
+        return redirect()->back()
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => 'These credentials do not match our records.']);
     }
 
     public function signUpForm()
