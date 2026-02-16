@@ -2,24 +2,39 @@ import Swiper from 'swiper';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
-function initProjectImageSwipers() {
+const INIT_DELAY_MS = 200;
+
+function getCard(el) {
+    return el.closest('a') || el.closest('.the-image') || el;
+}
+
+function updatePagination(swiperEl) {
+    const swiper = swiperEl.swiper;
+    if (!swiper) return;
+    const activeIndex = swiper.realIndex ?? swiper.activeIndex;
+    const card = getCard(swiperEl);
+    const bullets = card.querySelectorAll('.project-swiper-pagination-bullet');
+    bullets.forEach((bullet, i) => {
+        bullet.classList.toggle('project-swiper-pagination-bullet-active', i === activeIndex);
+    });
+}
+
+export function initProjectImageSwipers() {
     document.querySelectorAll('.project-image-swiper').forEach((el) => {
         if (el.swiper) return;
+
         const slideCount = el.querySelectorAll('.swiper-slide').length;
-        // Loop needs 3+ slides; with 2, Swiper emits a warning and disables loop anyway
-        const canLoop = slideCount >= 3;
+        const canLoop = slideCount >= 3; // Loop needs 3+; with 2, Swiper disables it anyway
+        const card = getCard(el);
+
         const swiper = new Swiper(el, {
             modules: [Autoplay],
-            direction: 'horizontal',
             loop: canLoop,
             speed: 600,
-            slidesPerView: 1,
             spaceBetween: 0,
             pagination: false,
-            autoplay: slideCount > 1 ? {
-                delay: 3000,
-                disableOnInteraction: false,
-            } : false,
+            lazyPreloadPrevNext: 1,
+            autoplay: slideCount > 1 ? { delay: 3000, disableOnInteraction: false } : false,
             nested: true,
             on: {
                 init() {
@@ -33,7 +48,6 @@ function initProjectImageSwipers() {
         });
 
         if (slideCount > 1) {
-            const card = el.closest('a') || el.closest('.the-image') || el;
             const pagination = card.querySelector('.project-swiper-pagination');
             if (pagination) {
                 pagination.querySelectorAll('.project-swiper-pagination-bullet').forEach((bullet) => {
@@ -55,18 +69,6 @@ function initProjectImageSwipers() {
     });
 }
 
-function updatePagination(swiperEl) {
-    const swiper = swiperEl.swiper;
-    if (!swiper) return;
-    const activeIndex = swiper.realIndex ?? swiper.activeIndex;
-    const card = swiperEl.closest('a') || swiperEl.closest('.the-image') || swiperEl;
-    const bullets = card.querySelectorAll('.project-swiper-pagination-bullet');
-    bullets.forEach((bullet, i) => {
-        bullet.classList.toggle('project-swiper-pagination-bullet-active', i === activeIndex);
-    });
-}
-
-// Delay 150ms so we run after the main home swiper removes hidden classes from slides (100ms)
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initProjectImageSwipers, 150);
+    setTimeout(initProjectImageSwipers, INIT_DELAY_MS);
 });

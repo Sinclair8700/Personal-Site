@@ -17,11 +17,14 @@
             <div class="project-image-swiper swiper h-full w-full">
                 <div class="swiper-wrapper">
                     @foreach($images as $image)
-                    <div class="swiper-slide">
+                    <div class="swiper-slide relative">
                         <img src="{{ asset('storage/projects/'.$project->slug.'/'.$image->filename) }}"
                             alt="{{ $project->name ?? null }}"
-                            class="w-full h-full object-cover rounded-t-md xs:rounded-t-none sm:rounded-r-md transition-[]"
+                            class="w-full h-full object-cover rounded-t-md xs:rounded-t-none sm:rounded-r-md"
                             loading="{{ $loop->first ? 'eager' : 'lazy' }}">
+                        @if(!$loop->first)
+                        <div class="swiper-lazy-preloader"></div>
+                        @endif
                     </div>
                     @endforeach
                 </div>

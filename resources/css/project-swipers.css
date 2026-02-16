@@ -1,19 +1,14 @@
-/* Main projects carousel: no pagination, nav buttons contained within carousel */
+/* Main carousel: no pagination (we use prev/next buttons only) */
 .projects-carousel .swiper-pagination {
     display: none !important;
 }
-.projects-carousel .swiper-button-prev,
-.projects-carousel .swiper-button-next {
-    position: absolute;
-    z-index: 10;
-}
 
-/* Hide any Swiper default pagination in nested project image swipers */
+/* Nested image swipers: hide Swiper's default pagination (we use custom .project-swiper-pagination) */
 .the-image .swiper-pagination {
     display: none !important;
 }
 
-/* Project image swiper pagination dots (confined to image area) */
+/* Project image swiper: custom pagination dots */
 .project-swiper-pagination {
     position: absolute;
     bottom: 8px;
