@@ -7,6 +7,7 @@ import './popover';
 import './copy-value';
 import './snow';
 import './gap-snake';
+import './project-image-swiper';
 import.meta.glob([
     '../views/projects/projects/**/*.{png,jpg,jpeg,gif,webp,svg}'
 ])

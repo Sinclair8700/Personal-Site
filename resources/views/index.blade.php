@@ -30,14 +30,14 @@
                 [&_.swiper-slide]:ease-in-out
                 ">
                     @foreach (\App\Models\Project::with('images')->get()->shuffle() as $project)
+                        @if(!$project->images->isNotEmpty())
+                            @continue
+                        @endif
                         @php
-                            $primaryImage = $project->primaryImage();
-                            if(!$primaryImage){
-                                continue;
-                            }
+                            $primaryImage = $project->images->first();
                         @endphp
                         <div class="swiper-slide    h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden overflow-visible">
-                            <x-project :project="$project" :swiper="true" class="xs:inline hidden"/>
+                            <x-project :project="$project" class="xs:inline hidden"/>
 
                             <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block xs:hidden border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
                                 <img 
