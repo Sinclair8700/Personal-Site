@@ -7,9 +7,11 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\ProjectImage;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Http\UploadedFile;
 
 class ProjectController extends Controller
 {
@@ -74,7 +76,14 @@ class ProjectController extends Controller
             }
 
             if ($request->hasFile('images')) {
-                $project->addImages($request->file('images'));
+                $files = $request->file('images');
+                $files = is_array($files) ? Arr::flatten($files) : [$files];
+                $validFiles = array_values(array_filter($files, fn ($f) => $f instanceof UploadedFile && $f->isValid()));
+                if (!empty($validFiles)) {
+                    $project->addImages($validFiles);
+                } elseif (!empty($files)) {
+                    session()->flash('warning', 'The uploaded file(s) could not be processed. Please check file size (max 8MB) and format (jpeg, png, jpg, gif, svg).');
+                }
             }
         });
 

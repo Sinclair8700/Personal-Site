@@ -33,7 +33,15 @@
             <input name="{{ $name }}" type="{{ $type }}" {{ $attributes->merge(['class' => ($type == 'file' ? 'opacity-0' : '') . ' block min-w-0 w-full h-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6']) }}/>
         @endif
     </x-bubble>
-    @error($name)
-        <p class="text-red-500">{{ $message }}</p>
-    @enderror
+    @php
+        $errorKey = str_ends_with($name, '[]') ? substr($name, 0, -2) : $name;
+        $errorMsg = $errors->first($errorKey)
+            ?? collect($errors->getMessageBag()->getMessages())
+                ->filter(fn ($_, $k) => str_starts_with($k, $errorKey . '.'))
+                ->flatten()
+                ->first();
+    @endphp
+    @if($errorMsg)
+        <p class="text-red-500">{{ $errorMsg }}</p>
+    @endif
 </div>

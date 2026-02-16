@@ -1,5 +1,10 @@
 <x-page :title="$title">
     <x-content type="wide" class="py-6">
+        @if(session('warning'))
+            <x-bubble class="mb-4 border-l-4 border-amber-500">
+                <p class="text-amber-200">{{ session('warning') }}</p>
+            </x-bubble>
+        @endif
         <x-form action="{{ route('projects.update', $project) }}" method="PUT" enctype="multipart/form-data">
 
             <x-input name="name" value="{{ old('name', $project->name) }}" >
