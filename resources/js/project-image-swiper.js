@@ -5,7 +5,7 @@ import 'swiper/css';
 function initProjectImageSwipers() {
     document.querySelectorAll('.project-image-swiper').forEach((el) => {
         const slideCount = el.querySelectorAll('.swiper-slide').length;
-        new Swiper(el, {
+        const swiper = new Swiper(el, {
             modules: [Autoplay],
             direction: 'horizontal',
             loop: slideCount > 1,
@@ -14,11 +14,16 @@ function initProjectImageSwipers() {
             spaceBetween: 0,
             autoplay: slideCount > 1 ? {
                 delay: 3000,
-                pauseOnMouseEnter: true,
                 disableOnInteraction: false,
             } : false,
             nested: true,
         });
+
+        if (slideCount > 1) {
+            swiper.autoplay.stop();
+            el.addEventListener('mouseenter', () => swiper.autoplay.start());
+            el.addEventListener('mouseleave', () => swiper.autoplay.stop());
+        }
     });
 }
 
