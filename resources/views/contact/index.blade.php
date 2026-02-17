@@ -8,7 +8,7 @@
         
         <x-form method="POST" action="{{ route('contact.store') }}">
             <x-input name="email_address" type="text">Email</x-input>
-            <x-inpu name="message" type="textarea">Message</x-input>
+            <x-input name="message" type="textarea">Message</x-input>
             <x-button>Send</x-button>
         </x-form>
     </x-content>
