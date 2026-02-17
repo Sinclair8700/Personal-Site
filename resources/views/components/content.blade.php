@@ -27,6 +27,13 @@
             'class' => "relative px-6 flex flex-col w-full shrink-0 grow " . $types[$type]
         ])
     }}>
+        @once
+            @if(session('success'))
+                <x-bubble class="mb-4">
+                    <p class="text-white">{{ session('success') }}</p>
+                </x-bubble>
+            @endif
+        @endonce
         {{ $slot }}
     </div>
     @isset($rightGutter)
