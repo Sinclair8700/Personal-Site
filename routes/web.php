@@ -48,4 +48,5 @@ Route::controller(AccountController::class)->group(function () {
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
-Route::get('/contact', [ContactController::class, 'index']);
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::get('/contact/send', [ContactController::class, 'store'])->name('contact.store');
