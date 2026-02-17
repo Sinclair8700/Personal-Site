@@ -13,7 +13,7 @@
         </div>
         <div class="w-full">
             <h2 class="text-white mb-4">Projects</h2>
-            <div class="swiper text-white w-full rounded-md aspect-[704/396] md:aspect-[2704/747] ">
+            <div class="projects-carousel swiper text-white w-full rounded-md aspect-[704/396] md:aspect-[2704/747] ">
                 <div class="
                 rounded-lg
                 swiper-wrapper 
@@ -53,12 +53,6 @@
                         </div>
                     @endforeach
                 </div>
-
-                <div class="swiper-pagination"></div>
-
-                <!-- If we need navigation buttons -->
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
             </div>
         </div>
 

@@ -1,7 +1,36 @@
-/* Project image swiper pagination dots */
-.project-image-swiper .swiper-pagination-bullet {
-    background: rgba(255, 255, 255, 0.6);
+/* Main carousel: no pagination (we use prev/next buttons only) */
+.projects-carousel .swiper-pagination {
+    display: none !important;
 }
-.project-image-swiper .swiper-pagination-bullet-active {
+
+/* Nested image swipers: hide Swiper's default pagination (we use custom .project-swiper-pagination) */
+.the-image .swiper-pagination {
+    display: none !important;
+}
+
+/* Project image swiper: custom pagination dots */
+.project-swiper-pagination {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 20;
+    pointer-events: none;
+}
+.project-swiper-pagination-bullet {
+    pointer-events: auto;
+    width: 12px;
+    height: 12px;
+    margin: 0 6px;
+    border-radius: 50%;
+    border: 2px solid black;
     background: white;
+    opacity: 1;
+    cursor: pointer;
+    display: inline-block;
+    transition: background 0.2s;
+}
+.project-swiper-pagination-bullet-active {
+    background: var(--color-purple, var(--color-indigo-600));
 }
