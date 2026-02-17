@@ -29,7 +29,7 @@ class ContactController extends Controller
 
         (new Contact($request->all()))->save();
 
-        return redirect()->back(200);
+        return redirect()->back()->with('success', 'Thanks for your message! I\'ll get back to you soon.');
     }
 
     /**
