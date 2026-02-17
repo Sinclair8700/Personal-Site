@@ -23,8 +23,8 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'message|max:511|min:10',
-            'email_address|email|max:255',
+            'message' => 'required|max:511|min:10',
+            'email_address' => 'required|email|max:255',
         ]);
 
         (new Contact($request->all()))->save();
