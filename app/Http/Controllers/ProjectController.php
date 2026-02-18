@@ -82,7 +82,7 @@ class ProjectController extends Controller
                 if (!empty($validFiles)) {
                     $project->addImages($validFiles);
                 } elseif (!empty($files)) {
-                    session()->flash('warning', 'The uploaded file(s) could not be processed. Please check file size (max 8MB) and format (jpeg, png, jpg, gif, svg).');
+                    session()->flash('warning', 'The uploaded file(s) could not be processed. Please check file size (max 20MB per image) and format (jpeg, png, jpg, gif, svg).');
                 }
             }
         });

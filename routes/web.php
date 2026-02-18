@@ -6,6 +6,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\EducationController;
 use App\Http\Controllers\ApiSandboxController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SitemapController;
 
@@ -46,3 +47,6 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact/send', [ContactController::class, 'store'])->name('contact.store');
