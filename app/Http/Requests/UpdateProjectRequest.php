@@ -30,7 +30,7 @@ class UpdateProjectRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:8192',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:20480',
             'link' => 'url|nullable',
             'remove_images' => 'nullable|array',
             'remove_images.*' => [Rule::in($allowedIds)],
