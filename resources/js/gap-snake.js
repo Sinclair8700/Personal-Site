@@ -10,8 +10,10 @@ class GapSnake {
             y: 0,
             vx: 1.5,
             vy: 1.5,
+            baseSpeed: 1.5,
+            speed: 1.5,
             trail: [],
-            maxTrailLength: 30, // Back to 30 for performance
+            maxTrailLength: 40, // Longer body for a smoother, more serpentine look
             size: 3,
             visitedCells: new Map(), // Track visited areas
             exploreRadius: 50, // How close we consider "same area"
@@ -24,6 +26,15 @@ class GapSnake {
         };
         this.animationId = null;
         this.debugMode = false; // ENABLE TO SEE WHAT'S BEING DETECTED
+
+        // Animation + effects state
+        this.frame = 0;
+        this.wave = { amp: 2.6, freq: 7.0, speed: 0.22 }; // travelling serpentine wave down the body
+        this.mouse = { x: 0, y: 0, active: false };
+        this.curiousRadius = 240; // how close the cursor must be for the snake to notice it
+        this.cursorCooldown = 0;
+        this._curious = false;
+
         this.init();
     }
 
@@ -63,6 +74,22 @@ class GapSnake {
             this.resizeCanvas();
             this.findOccupiedSpaces();
         });
+
+        // Track the cursor so the snake can get curious and come say hi
+        this.onMouseMove = (e) => {
+            const rect = this.element.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
+                this.mouse.x = x;
+                this.mouse.y = y;
+                this.mouse.active = true;
+            } else {
+                this.mouse.active = false;
+            }
+        };
+        window.addEventListener('mousemove', this.onMouseMove, { passive: true });
+        this.element.addEventListener('mouseleave', () => { this.mouse.active = false; });
     }
 
     resizeCanvas() {
@@ -296,11 +323,6 @@ class GapSnake {
                 });
             }
         });
-        
-        console.log('Occupied spaces found:', this.occupiedSpaces.length);
-        if (this.occupiedSpaces.length > 0) {
-            console.log('Sample occupied spaces:', this.occupiedSpaces.slice(0, 5));
-        }
     }
 
     initializeSnakePosition() {
@@ -352,6 +374,30 @@ class GapSnake {
             }
         }
         return true; // Center is checked in the calling code
+    }
+
+    findFreePointNear(mx, my) {
+        // Find the nearest gap the snake can occupy around a target (e.g. the cursor)
+        const margin = 12;
+        mx = Math.min(Math.max(mx, margin), this.canvas.width - margin);
+        my = Math.min(Math.max(my, margin), this.canvas.height - margin);
+
+        for (let r = 0; r <= 140; r += 14) {
+            const steps = r === 0 ? 1 : Math.max(6, Math.round(r / 6));
+            for (let k = 0; k < steps; k++) {
+                const a = (Math.PI * 2 * k) / steps;
+                const x = mx + Math.cos(a) * r;
+                const y = my + Math.sin(a) * r;
+                if (x < margin || x > this.canvas.width - margin ||
+                    y < margin || y > this.canvas.height - margin) {
+                    continue;
+                }
+                if (!this.isInOccupiedSpace(x, y) && this.canSnakePassThrough(x, y)) {
+                    return { x, y };
+                }
+            }
+        }
+        return null;
     }
 
     findInterestingWaypoint() {
@@ -626,7 +672,26 @@ class GapSnake {
                 this.snake.waypointTimer = this.snake.waypointRefreshTime;
             }
         }
-        
+
+        // Cursor curiosity: when the pointer is nearby, the snake breaks off to visit it.
+        // Reuses the normal waypoint machinery, so gap-navigation stays just as safe.
+        this._curious = false;
+        if (this.cursorCooldown > 0) this.cursorCooldown--;
+        if (this.mouse.active) {
+            const dm = Math.hypot(this.mouse.x - this.snake.x, this.mouse.y - this.snake.y);
+            if (dm < this.curiousRadius) {
+                this._curious = true;
+                if (this.cursorCooldown === 0) {
+                    const target = this.findFreePointNear(this.mouse.x, this.mouse.y);
+                    if (target) {
+                        this.snake.targetWaypoint = target;
+                        this.snake.waypointTimer = this.snake.waypointRefreshTime;
+                        this.cursorCooldown = 18; // don't re-target every single frame
+                    }
+                }
+            }
+        }
+
         // Check if we're stuck (not moving much OR bouncing back and forth)
         const distanceMoved = Math.sqrt(
             Math.pow(this.snake.x - this.snake.lastPosition.x, 2) +
@@ -836,6 +901,28 @@ class GapSnake {
             }
         }
         
+        // Variable speed: dart through open space, ease off in tight gaps
+        const headingNow = Math.atan2(this.snake.vy, this.snake.vx);
+        let clearAhead = 0;
+        const probeMax = 55;
+        for (let d = 6; d <= probeMax; d += 6) {
+            const px = this.snake.x + Math.cos(headingNow) * d;
+            const py = this.snake.y + Math.sin(headingNow) * d;
+            if (px < margin || px > this.canvas.width - margin ||
+                py < margin || py > this.canvas.height - margin ||
+                this.isInOccupiedSpace(px, py)) {
+                break;
+            }
+            clearAhead = d;
+        }
+        const openness = clearAhead / probeMax; // 0 = boxed in, 1 = wide open
+        let targetSpeed = this.snake.baseSpeed * (0.8 + openness * 0.75);
+        if (this._curious) targetSpeed *= 1.15; // a little eager when visiting the cursor
+        this.snake.speed += (targetSpeed - this.snake.speed) * 0.06; // ease, don't snap
+        const mag = Math.hypot(this.snake.vx, this.snake.vy) || 1;
+        this.snake.vx = (this.snake.vx / mag) * this.snake.speed;
+        this.snake.vy = (this.snake.vy / mag) * this.snake.speed;
+
         // Calculate next position
         let nextX = this.snake.x + this.snake.vx;
         let nextY = this.snake.y + this.snake.vy;
@@ -877,49 +964,116 @@ class GapSnake {
     }
 
     drawSnake() {
-        // Simplified rendering for performance - indigo-600: rgb(79, 70, 229)
-        
-        // Draw trail - simple approach
-        for (let i = 0; i < this.snake.trail.length; i++) {
-            const point = this.snake.trail[i];
-            const progress = (i + 1) / this.snake.trail.length;
-            const opacity = progress * 0.8;
-            const size = this.snake.size * progress;
-            
-            // Simple glow
-            this.ctx.beginPath();
-            this.ctx.arc(point.x, point.y, size * 2, 0, Math.PI * 2);
-            this.ctx.fillStyle = `rgba(79, 70, 229, ${opacity * 0.2})`;
-            this.ctx.fill();
-            
-            // Core
-            this.ctx.beginPath();
-            this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
-            this.ctx.fillStyle = `rgba(129, 140, 248, ${opacity})`;
-            this.ctx.fill();
+        // Neon serpentine ribbon - indigo palette on black
+        const ctx = this.ctx;
+        const t = this.frame;
+
+        // Body points run tail -> head (head is the live position, not yet in the trail)
+        const pts = this.snake.trail.concat([{ x: this.snake.x, y: this.snake.y }]);
+        const n = pts.length;
+        const headHalf = this.snake.size * 1.05; // body half-width at the head
+
+        if (n >= 3) {
+            // Build a smoothed centerline with a travelling serpentine wave laid over it
+            const center = new Array(n);
+            for (let i = 0; i < n; i++) {
+                const prev = pts[Math.max(0, i - 1)];
+                const next = pts[Math.min(n - 1, i + 1)];
+                let tx = next.x - prev.x;
+                let ty = next.y - prev.y;
+                const tl = Math.hypot(tx, ty) || 1;
+                tx /= tl; ty /= tl;
+                const nx = -ty; // unit normal
+                const ny = tx;
+                const f = i / (n - 1); // 0 at tail, 1 at head
+                const envelope = Math.sin(Math.PI * f); // fades the wave to 0 at both ends
+                const wave = Math.sin(f * this.wave.freq - t * this.wave.speed) * this.wave.amp * envelope;
+                center[i] = { x: pts[i].x + nx * wave, y: pts[i].y + ny * wave, nx, ny, f };
+            }
+
+            const hw = (i) => headHalf * Math.pow(center[i].f, 0.65) + 0.4; // taper thin -> full
+
+            // Filled body with a bloom and a tail->head gradient
+            const head = center[n - 1];
+            const tail = center[0];
+            const grad = ctx.createLinearGradient(tail.x, tail.y, head.x, head.y);
+            grad.addColorStop(0, 'rgba(79, 70, 229, 0)');
+            grad.addColorStop(0.35, 'rgba(99, 102, 241, 0.55)');
+            grad.addColorStop(1, 'rgba(165, 180, 252, 0.95)');
+
+            ctx.save();
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.shadowColor = 'rgba(99, 102, 241, 0.85)';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.moveTo(center[0].x + center[0].nx * hw(0), center[0].y + center[0].ny * hw(0));
+            for (let i = 1; i < n; i++) {
+                ctx.lineTo(center[i].x + center[i].nx * hw(i), center[i].y + center[i].ny * hw(i));
+            }
+            for (let i = n - 1; i >= 0; i--) {
+                ctx.lineTo(center[i].x - center[i].nx * hw(i), center[i].y - center[i].ny * hw(i));
+            }
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.restore();
+
+            // Bright spine highlight along the front ~60% of the body
+            ctx.save();
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.shadowColor = 'rgba(199, 210, 254, 0.9)';
+            ctx.shadowBlur = 6;
+            const start = Math.max(0, n - Math.floor(n * 0.6));
+            ctx.beginPath();
+            ctx.moveTo(center[start].x, center[start].y);
+            for (let i = start + 1; i < n; i++) {
+                ctx.lineTo(center[i].x, center[i].y);
+            }
+            ctx.strokeStyle = 'rgba(224, 231, 255, 0.75)';
+            ctx.lineWidth = Math.max(1, this.snake.size * 0.5);
+            ctx.stroke();
+            ctx.restore();
         }
-        
-        // Draw snake head - simplified
+
+        // Living, directional head with a gentle breathing pulse
+        const heading = Math.atan2(this.snake.vy, this.snake.vx);
+        const pulse = 1 + 0.12 * Math.sin(t * 0.12);
+        const eager = this._curious ? 1.25 : 1; // brightens when chasing the cursor
+        const s = this.snake.size;
+
+        ctx.save();
+        ctx.translate(this.snake.x, this.snake.y);
+        ctx.rotate(heading);
+
         // Outer glow
-        this.ctx.beginPath();
-        this.ctx.arc(this.snake.x, this.snake.y, this.snake.size * 3, 0, Math.PI * 2);
-        this.ctx.fillStyle = 'rgba(79, 70, 229, 0.3)';
-        this.ctx.fill();
-        
-        // Inner glow
-        this.ctx.beginPath();
-        this.ctx.arc(this.snake.x, this.snake.y, this.snake.size * 1.8, 0, Math.PI * 2);
-        this.ctx.fillStyle = 'rgba(129, 140, 248, 0.8)';
-        this.ctx.fill();
-        
-        // Bright center
-        this.ctx.beginPath();
-        this.ctx.arc(this.snake.x, this.snake.y, this.snake.size, 0, Math.PI * 2);
-        this.ctx.fillStyle = 'rgba(224, 231, 255, 1)';
-        this.ctx.fill();
+        ctx.shadowColor = 'rgba(99, 102, 241, 0.9)';
+        ctx.shadowBlur = 16 * eager;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, s * 2.4 * pulse, s * 1.7 * pulse, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(79, 70, 229, 0.35)';
+        ctx.fill();
+
+        // Inner glow, nudged forward so the head reads as leading
+        ctx.shadowBlur = 8 * eager;
+        ctx.beginPath();
+        ctx.ellipse(s * 0.3, 0, s * 1.5 * pulse, s * 1.15 * pulse, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(129, 140, 248, 0.9)';
+        ctx.fill();
+
+        // Bright core
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        ctx.arc(s * 0.5, 0, s * 0.8 * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(224, 231, 255, 1)';
+        ctx.fill();
+
+        ctx.restore();
     }
 
     animate() {
+        this.frame++;
         // Clear canvas completely
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
@@ -959,6 +1113,9 @@ class GapSnake {
     destroy() {
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
+        }
+        if (this.onMouseMove) {
+            window.removeEventListener('mousemove', this.onMouseMove);
         }
         if (this.canvas && this.canvas.parentNode) {
             this.canvas.parentNode.removeChild(this.canvas);
