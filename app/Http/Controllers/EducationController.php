@@ -8,11 +8,15 @@ class EducationController extends Controller
 {
     public function index(){
         $education = Education::all();
-        return view('education.index', ['title' => 'Education', 'education' => $education]);
+        return view('education.index', [
+            'title' => 'Education',
+            'description' => 'The education and academic background of Alex Davies, including a Computer Science degree from Keele University.',
+            'education' => $education,
+        ]);
     }
 
     public function show($slug){
-        $education = Education::where('slug', $slug)->first();
+        $education = Education::where('slug', $slug)->firstOrFail();
 
         return view('education.show', [
             'title' => $education->name, 

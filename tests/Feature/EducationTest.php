@@ -23,7 +23,7 @@ it('shows education images on education index page', function () {
     $education = Education::all();
     foreach ($education as $education) {
         get(route('education.index'))
-            ->assertSeeInOrder(['<a', $education->image, '<img', '</a>'], false);
+            ->assertSeeInOrder(['<a', '<img', $education->image, '</a>'], false);
     }
 });
 

@@ -11,7 +11,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SitemapController;
 
 Route::get('/', function () {
-    return view('index', ['title' => 'Home']);
+    return view('index', [
+        'title' => 'Alex Davies — Software Developer',
+        'description' => 'Alex Davies is a full-stack software developer working in PHP, JavaScript, Python and C++. Explore my portfolio of web apps, game engines, embedded electronics and automation projects.',
+    ]);
 })->name('index');
 
 Route::controller(ProjectController::class)->group(function () {
@@ -49,4 +52,4 @@ Route::controller(AccountController::class)->group(function () {
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-Route::post('/contact/send', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact/send', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');

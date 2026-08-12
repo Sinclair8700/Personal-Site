@@ -1,3 +1,15 @@
+@props([
+    'title' => 'No title',
+    'description' => null,
+    'image' => null,
+    'noindex' => false,
+])
+@php
+    $metaDescription = $description ?: 'Software developer specializing in PHP, JavaScript, Python and C++. View my portfolio of projects including web applications, 3D CAD, and automation tools.';
+    $metaImage = $image
+        ? (\Illuminate\Support\Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))
+        : asset('images/og-default.png');
+@endphp
 <!DOCTYPE html>
 <html id="html" class="h-[100vh] w-full m-0 " lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -5,10 +17,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{ request()->is('/') ? 'Alex Davies | Developer' : $title . ' | Alex Davies' }}</title>
+        @if($noindex)
+            <meta name="robots" content="noindex, nofollow">
+        @else
+            <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+        @endif
 
         <!-- Primary Meta Tags -->
         <meta name="title" content="{{ request()->is('/') ? 'Alex Davies | Developer' : $title . ' | Alex Davies' }}">
-        <meta name="description" content="@yield('meta_description', 'Software developer specializing in PHP, JavaScript, Python and C++. View my portfolio of projects including web applications, 3D CAD, and automation tools.')">
+        <meta name="description" content="{{ $metaDescription }}">
         <meta name="keywords" content="software developer, web developer, PHP developer, JavaScript developer, Python developer, C++ developer, {{ $title ?? '' }}">
         <meta name="author" content="Alex Davies">
 
@@ -16,16 +33,29 @@
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:title" content="{{ request()->is('/') ? 'Alex Davies | Developer' : $title . ' | Alex Davies' }}">
-        <meta property="og:description" content="@yield('meta_description', 'Software developer specializing in PHP, JavaScript, Python and C++. View my portfolio of projects including web applications, game engines, and automation tools.')">
+        <meta property="og:description" content="{{ $metaDescription }}">
+        <meta property="og:image" content="{{ $metaImage }}">
+        @unless($image)
+            <meta property="og:image:width" content="1200">
+            <meta property="og:image:height" content="630">
+        @endunless
+        <meta property="og:site_name" content="Alex Davies">
+        <meta property="og:locale" content="en_GB">
 
         <!-- Twitter -->
         <meta property="twitter:card" content="summary_large_image">
         <meta property="twitter:url" content="{{ url()->current() }}">
         <meta property="twitter:title" content="{{ request()->is('/') ? 'Alex Davies | Developer' : $title . ' | Alex Davies' }}">
-        <meta property="twitter:description" content="@yield('meta_description', 'Software developer specializing in PHP, JavaScript, Python and C++. View my portfolio of projects including web applications, game engines, and automation tools.')">
+        <meta property="twitter:description" content="{{ $metaDescription }}">
+        <meta property="twitter:image" content="{{ $metaImage }}">
 
         <!-- Canonical URL -->
         <link rel="canonical" href="{{ url()->current() }}" />
+
+        <!-- Icons -->
+        <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+        <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+        <meta name="theme-color" content="#000000">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -53,23 +83,32 @@
             "knowsAbout": ["PHP", "JavaScript", "Python", "C++", "Web Development", "Software Engineering"]
         }
         </script>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Alex Davies",
+            "url": "{{ url('/') }}"
+        }
+        </script>
     </head>
     <body id="body" class="font-sans antialiased dark:bg-black dark:text-white/50 h-full w-full m-0 flex flex-col relative sm:pt-16">
         <!--FOUC fix-->
         <script>0</script>
+        <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded">Skip to content</a>
         <x-nav>
 
             <x-nav-link href="/" :active="request()->is('/')" type="a" >Home</x-nav-link>
             <x-nav-dropdown text="Projects" type="a" href="/projects" :active="request()->is('projects')">
                 
-                @foreach (\App\Models\Project::all() as $project)
+                @foreach (\App\Models\Project::navList() as $project)
                     <x-nav-link href="/projects/{{ $project->slug }}" :active="request()->is('projects/' . $project->slug)" type="a" >{{ $project->name }}</x-nav-link>
                 @endforeach
             </x-nav-dropdown>
 
             <x-nav-dropdown text="Education" type="a" href="/education" :active="request()->is('education')">
                 
-                @foreach (\App\Models\Education::all() as $project)
+                @foreach (\App\Models\Education::navList() as $project)
                     <x-nav-link href="/education/{{ $project->slug }}" :active="request()->is('education/' . $project->slug)" type="a" >{{ $project->name }}</x-nav-link>
                 @endforeach
             </x-nav-dropdown>
@@ -93,13 +132,13 @@
                 <h1 class="tracking-tight text-gray-900">{{ html_entity_decode($title) }}</h1>
             </x-content>
         </header>
-        <main class=" min-w-full bg-black flex-[100%] gap-snake
+        <main id="main" tabindex="-1" class=" min-w-full bg-black flex-[100%] gap-snake
         
         
         ">
             {{ $slot }}
             <div class="bg-none my-6 w-full flex items-center justify-center">
-                <span class="text-white">Visitors: {{ \App\Models\PageVisit::max('id') }}</span>
+                <span class="text-white">Visitors: {{ \App\Models\PageVisit::uniqueVisitorCount() }}</span>
             </div>
         </main>
     </body>

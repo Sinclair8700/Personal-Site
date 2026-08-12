@@ -1,4 +1,4 @@
-<x-page :title="$title">
+<x-page :title="$title" :noindex="true">
     <x-content type="wide" class="py-6">
         @if(session('warning'))
             <x-bubble class="mb-4 border-l-4 border-amber-500">

@@ -20,15 +20,23 @@ class ProjectController extends Controller
         $projects = Project::with('images')
             ->whereHas('images')
             ->get();
-        return view('projects.index', ['title' => 'Projects', 'projects' => $projects]);
+        return view('projects.index', [
+            'title' => 'Projects',
+            'description' => 'A portfolio of software projects by Alex Davies — web apps, game engines, simulators, embedded electronics and automation tools built in PHP, JavaScript, Python and C++.',
+            'projects' => $projects,
+        ]);
     }
 
     public function show(Project $project): View
     {
         $project->load('images');
 
+        $primaryImage = $project->images->first();
+
         return view('projects.show', [
             'title' => $project->name,
+            'description' => Str::limit(strip_tags($project->getRawOriginal('description') ?? ''), 155),
+            'image' => $primaryImage ? 'storage/projects/'.$project->slug.'/'.$primaryImage->filename : null,
             'project' => $project
         ]);
     }

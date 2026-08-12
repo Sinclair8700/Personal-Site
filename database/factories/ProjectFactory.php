@@ -21,7 +21,7 @@ class ProjectFactory extends Factory
             if(!file_exists($path.'/index.blade.php')){
                 mkdir($path, 0755, true);
                 $file = fopen($path.'/index.blade.php', 'w');
-                fwrite($file, '<h1>Coming Soon</h1>');
+                fwrite($file, '{{-- Project write-up goes here. Content added here renders below the project description on /projects/{slug}. --}}'.PHP_EOL);
                 fclose($file);
             }
         });

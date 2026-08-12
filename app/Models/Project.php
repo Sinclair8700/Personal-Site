@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,10 +34,22 @@ class Project extends Model
             if(!file_exists($path.'/index.blade.php')){
                 mkdir($path, 0755, true);
                 $file = fopen($path.'/index.blade.php', 'w');
-                fwrite($file, '<h1>Coming Soon</h1>');
+                fwrite($file, '{{-- Project write-up goes here. Content added here renders below the project description on /projects/{slug}. --}}'.PHP_EOL);
                 fclose($file);
             }
         });
+
+        // Keep the cached nav dropdown list fresh when projects change.
+        static::saved(fn () => Cache::forget('nav.projects'));
+        static::deleted(fn () => Cache::forget('nav.projects'));
+    }
+
+    /**
+     * Cached list of projects for the nav dropdown (rendered on every page).
+     */
+    public static function navList()
+    {
+        return Cache::remember('nav.projects', now()->addHours(6), fn () => static::all());
     }
 
     public function delete()

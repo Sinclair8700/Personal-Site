@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
-use App\Http\Requests\ApiLoginRequest;
 use App\Http\Traits\ApiResponses;
 
 class ApiSandboxController extends Controller

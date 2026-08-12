@@ -2,7 +2,7 @@
     <x-content >
         <div class="flex h-16 items-center justify-between w-full">
             <div class="flex items-center w-full">
-                <h2 class="text-white">alexdavi.es</h2>
+                <a href="/" class="text-white">alexdavi.es</a>
                 <div class="hidden md:block w-full ml-10">
                     <div class="flex items-baseline justify-start gap-4 w-full">
                         {{ $slot }}
