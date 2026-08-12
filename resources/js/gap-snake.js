@@ -40,7 +40,8 @@ class GapSnake {
         this.steer = { maxTurn: 0.06, maxTurnUrgent: 0.16, probe: 42 };
         this.slither = { amp: 0.33, freq: 0.055 }; // gentle side-to-side weave of the path itself
         this.escapeTimer = 0;
-        this.escapeHeading = 0;
+        this.escapeTarget = null; // far, open point to flee toward when stuck
+        this.avoidZones = [];     // recent stuck spots to steer clear of for a while
 
         this.mouse = { x: 0, y: 0, active: false };
         this.curiousRadius = 400; // how close the cursor must be for the snake to notice it
@@ -655,7 +656,7 @@ class GapSnake {
         let best = null;
         for (let i = 0; i < 6; i++) {
             const wp = this.findInterestingWaypoint();
-            if (!wp) continue;
+            if (!wp || this.inAvoidZone(wp.x, wp.y)) continue; // don't re-target a spot we just got stuck in
             const dx = wp.x - this.snake.x;
             const dy = wp.y - this.snake.y;
             const dist = Math.hypot(dx, dy) || 1;
@@ -665,7 +666,36 @@ class GapSnake {
             if (!best || score > best.score) best = { wp, score };
             if (dist > 200 && ahead > -0.1) break; // already a good prowl target
         }
-        return best ? best.wp : null;
+        return best ? best.wp : this.findInterestingWaypoint();
+    }
+
+    inAvoidZone(x, y, radius = 150) {
+        for (const z of this.avoidZones) {
+            if (Math.hypot(x - z.x, y - z.y) < radius) return true;
+        }
+        return false;
+    }
+
+    findEscapeTarget() {
+        // Find a far, OPEN point (few obstacles around it) that isn't near a spot we
+        // just got stuck in — somewhere with room to breathe, to break a bounce loop.
+        const margin = 20;
+        let best = null;
+        for (let i = 0; i < 60; i++) {
+            const x = margin + Math.random() * (this.canvas.width - margin * 2);
+            const y = margin + Math.random() * (this.canvas.height - margin * 2);
+            if (this.isInOccupiedSpace(x, y) || !this.canSnakePassThrough(x, y)) continue;
+            if (this.inAvoidZone(x, y, 170)) continue;
+            let obstacles = 0;
+            for (let k = 0; k < 8; k++) {
+                const a = (k / 8) * Math.PI * 2;
+                if (this.isInOccupiedSpace(x + Math.cos(a) * 70, y + Math.sin(a) * 70)) obstacles++;
+            }
+            const dist = Math.hypot(x - this.snake.x, y - this.snake.y);
+            const score = dist - obstacles * 110; // far away AND surrounded by open space
+            if (!best || score > best.score) best = { x, y, score };
+        }
+        return best ? { x: best.x, y: best.y } : this.pickRoamWaypoint();
     }
 
     updateSnake() {
@@ -696,12 +726,13 @@ class GapSnake {
             this.snake.waypointTimer--;
         }
         
-        // Pick a new waypoint periodically or if we don't have one
-        if (!this.snake.targetWaypoint || this.snake.waypointTimer === 0) {
+        // Pick a new waypoint periodically or if we don't have one (but never override
+        // an in-progress escape — that's what keeps it from being pulled back into a gap).
+        if (this.escapeTimer <= 0 && (!this.snake.targetWaypoint || this.snake.waypointTimer === 0)) {
             this.snake.targetWaypoint = this.pickRoamWaypoint();
             this.snake.waypointTimer = this.snake.waypointRefreshTime; // MUCH longer - ~10 seconds per waypoint
         }
-        
+
         // Check if we reached the waypoint
         if (this.snake.targetWaypoint) {
             const distToWaypoint = Math.sqrt(
@@ -711,6 +742,7 @@ class GapSnake {
             // Consider it "reached" from a bit of a distance: trying to pin a target
             // closer than our minimum turn radius just makes the snake orbit it.
             if (distToWaypoint < 34) {
+                this.escapeTimer = 0; // if we were fleeing, we've made it to open space
                 this.snake.targetWaypoint = this.pickRoamWaypoint();
                 this.snake.waypointTimer = this.snake.waypointRefreshTime;
             }
@@ -799,21 +831,23 @@ class GapSnake {
             return probe;
         };
 
-        // If we've genuinely got stuck, aim at the most open direction and commit to
-        // escaping it for a beat before resuming normal seeking.
-        if (this.snake.stuckCounter > 22 && this.escapeTimer <= 0) {
-            let bestA = heading, bestC = -1;
-            for (let deg = 0; deg < 360; deg += 15) {
-                const a = deg * Math.PI / 180;
-                const c = clearDist(a);
-                if (c > bestC) { bestC = c; bestA = a; }
-            }
-            heading = this.snake.heading = bestA;
-            this.escapeHeading = bestA;
-            this.escapeTimer = 28;
-            this.snake.stuckCounter = 0;
-            this.snake.targetWaypoint = this.pickRoamWaypoint();
+        // Expire old no-go zones
+        if (this.avoidZones.length) {
+            this.avoidZones = this.avoidZones.filter(z => z.until > this.clock);
+        }
+
+        // If we've genuinely got stuck (e.g. bouncing in a dead-end gap), remember this
+        // spot as a no-go zone, then flee toward a far OPEN area and commit to it long
+        // enough to actually leave — instead of sliding along the gap and being pulled
+        // straight back (which is what caused the back-and-forth twitching).
+        if (this.snake.stuckCounter > 18 && this.escapeTimer <= 0) {
+            this.avoidZones.push({ x: this.snake.x, y: this.snake.y, until: this.clock + 360 });
+            if (this.avoidZones.length > 5) this.avoidZones.shift();
+            this.escapeTarget = this.findEscapeTarget();
+            this.snake.targetWaypoint = this.escapeTarget;
             this.snake.waypointTimer = this.snake.waypointRefreshTime;
+            this.escapeTimer = 120; // ~2s of committed fleeing
+            this.snake.stuckCounter = 0;
         }
 
         // Desired heading: toward the waypoint, with a gentle serpentine weave so it
@@ -821,7 +855,9 @@ class GapSnake {
         let desired;
         if (this.escapeTimer > 0) {
             this.escapeTimer -= dt;
-            desired = this.escapeHeading;
+            // Head straight for the open escape target (no weave — take the way out).
+            const et = this.escapeTarget;
+            desired = et ? Math.atan2(et.y - this.snake.y, et.x - this.snake.x) : heading;
         } else if (this._curious) {
             // Sneak straight at the cursor (with a lighter weave). It can't pin a point
             // tighter than its turn radius, so it naturally circles the pointer.
