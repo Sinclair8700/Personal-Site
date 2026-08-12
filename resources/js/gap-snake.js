@@ -10,10 +10,11 @@ class GapSnake {
             y: 0,
             vx: 1.5,
             vy: 1.5,
-            baseSpeed: 1.5,
-            speed: 1.5,
+            heading: undefined, // set lazily from velocity on first update
+            baseSpeed: 1.15,    // slower, more deliberate than before
+            speed: 1.15,
             trail: [],
-            maxTrailLength: 40, // Longer body for a smoother, more serpentine look
+            maxTrailLength: 44, // number of body points (x trailSpacing = body length)
             size: 3,
             visitedCells: new Map(), // Track visited areas
             exploreRadius: 50, // How close we consider "same area"
@@ -29,9 +30,20 @@ class GapSnake {
 
         // Animation + effects state
         this.frame = 0;
-        this.wave = { amp: 2.6, freq: 7.0, speed: 0.22 }; // travelling serpentine wave down the body
+        this.clock = 0;          // frame-rate–independent time (advances ~1 per 60fps frame)
+        this._lastT = 0;
+        this._posHist = [];      // recent positions, for stuck detection
+        this.trailSpacing = 3.2; // px between body points (x maxTrailLength = body length ~140px)
+        this.wave = { amp: 1.8, freq: 7.0, speed: 0.22 }; // travelling serpentine wave down the body
+
+        // Steering / movement feel (the knobs that make it a smooth, sneaky glider)
+        this.steer = { maxTurn: 0.06, maxTurnUrgent: 0.16, probe: 42 };
+        this.slither = { amp: 0.33, freq: 0.055 }; // gentle side-to-side weave of the path itself
+        this.escapeTimer = 0;
+        this.escapeHeading = 0;
+
         this.mouse = { x: 0, y: 0, active: false };
-        this.curiousRadius = 240; // how close the cursor must be for the snake to notice it
+        this.curiousRadius = 400; // how close the cursor must be for the snake to notice it
         this.cursorCooldown = 0;
         this._curious = false;
 
@@ -637,15 +649,45 @@ class GapSnake {
         return null;
     }
 
-    updateSnake() {
-        // Add current position to trail
-        this.snake.trail.push({ x: this.snake.x, y: this.snake.y });
-        
-        // Limit trail length
-        if (this.snake.trail.length > this.snake.maxTrailLength) {
-            this.snake.trail.shift();
+    pickRoamWaypoint() {
+        // Prefer waypoints that are far away and roughly ahead of us, so the snake
+        // prowls onward instead of doubling back and coiling on a nearby target.
+        let best = null;
+        for (let i = 0; i < 6; i++) {
+            const wp = this.findInterestingWaypoint();
+            if (!wp) continue;
+            const dx = wp.x - this.snake.x;
+            const dy = wp.y - this.snake.y;
+            const dist = Math.hypot(dx, dy) || 1;
+            const ahead = this.snake.heading === undefined ? 0 :
+                (Math.cos(this.snake.heading) * dx + Math.sin(this.snake.heading) * dy) / dist;
+            const score = dist + ahead * 180; // far + ahead wins
+            if (!best || score > best.score) best = { wp, score };
+            if (dist > 200 && ahead > -0.1) break; // already a good prowl target
         }
-        
+        return best ? best.wp : null;
+    }
+
+    updateSnake() {
+        // Sample the trail by DISTANCE, not per-frame, so the body is a consistent
+        // length no matter the speed or refresh rate (evenly spaced points also make
+        // the ribbon + travelling wave render cleanly).
+        const lastPt = this.snake.trail[this.snake.trail.length - 1];
+        if (!lastPt || Math.hypot(this.snake.x - lastPt.x, this.snake.y - lastPt.y) >= this.trailSpacing) {
+            this.snake.trail.push({ x: this.snake.x, y: this.snake.y });
+            if (this.snake.trail.length > this.snake.maxTrailLength) {
+                this.snake.trail.shift();
+            }
+        }
+
+        // Frame-rate–independent time step (baseline 60fps) so the snake travels at
+        // the same real-world pace on 60Hz and 120Hz displays instead of racing.
+        const nowT = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+        let dt = this._lastT ? (nowT - this._lastT) / 16.667 : 1;
+        this._lastT = nowT;
+        dt = Math.min(Math.max(dt, 0.5), 2.5);
+        this.clock += dt;
+
         // Decrement timers
         if (this.snake.directionChangeTimer > 0) {
             this.snake.directionChangeTimer--;
@@ -656,7 +698,7 @@ class GapSnake {
         
         // Pick a new waypoint periodically or if we don't have one
         if (!this.snake.targetWaypoint || this.snake.waypointTimer === 0) {
-            this.snake.targetWaypoint = this.findInterestingWaypoint();
+            this.snake.targetWaypoint = this.pickRoamWaypoint();
             this.snake.waypointTimer = this.snake.waypointRefreshTime; // MUCH longer - ~10 seconds per waypoint
         }
         
@@ -666,21 +708,24 @@ class GapSnake {
                 Math.pow(this.snake.x - this.snake.targetWaypoint.x, 2) +
                 Math.pow(this.snake.y - this.snake.targetWaypoint.y, 2)
             );
-            if (distToWaypoint < 20) { // Reached waypoint
-                // Reached waypoint, get a new one immediately
-                this.snake.targetWaypoint = this.findInterestingWaypoint();
+            // Consider it "reached" from a bit of a distance: trying to pin a target
+            // closer than our minimum turn radius just makes the snake orbit it.
+            if (distToWaypoint < 34) {
+                this.snake.targetWaypoint = this.pickRoamWaypoint();
                 this.snake.waypointTimer = this.snake.waypointRefreshTime;
             }
         }
 
-        // Cursor curiosity: when the pointer is nearby, the snake breaks off to visit it.
-        // Reuses the normal waypoint machinery, so gap-navigation stays just as safe.
+        // Cursor curiosity: when the pointer is nearby, the snake breaks off to sneak
+        // over and investigate it. The steering below aims straight at the cursor while
+        // this flag is set; here we just detect it and keep a gap-safe fallback target.
         this._curious = false;
         if (this.cursorCooldown > 0) this.cursorCooldown--;
         if (this.mouse.active) {
             const dm = Math.hypot(this.mouse.x - this.snake.x, this.mouse.y - this.snake.y);
             if (dm < this.curiousRadius) {
                 this._curious = true;
+                this.snake.stuckCounter = 0; // don't let the stuck-escape yank it away mid-visit
                 if (this.cursorCooldown === 0) {
                     const target = this.findFreePointNear(this.mouse.x, this.mouse.y);
                     if (target) {
@@ -692,34 +737,21 @@ class GapSnake {
             }
         }
 
-        // Check if we're stuck (not moving much OR bouncing back and forth)
-        const distanceMoved = Math.sqrt(
-            Math.pow(this.snake.x - this.snake.lastPosition.x, 2) +
-            Math.pow(this.snake.y - this.snake.lastPosition.y, 2)
-        );
-        
-        // Also track if we're bouncing in the same area
-        if (this.snake.trail.length > 30) {
-            const recentTrail = this.snake.trail.slice(-30);
-            const avgX = recentTrail.reduce((sum, p) => sum + p.x, 0) / recentTrail.length;
-            const avgY = recentTrail.reduce((sum, p) => sum + p.y, 0) / recentTrail.length;
-            const variance = recentTrail.reduce((sum, p) => {
-                return sum + Math.pow(p.x - avgX, 2) + Math.pow(p.y - avgY, 2);
-            }, 0) / recentTrail.length;
-            
-            // If variance is very low, we're stuck in a small area
-            if (variance < 400) {
-                this.snake.stuckCounter += 3; // Count as more stuck
+        // Stuck detection: over the last ~second of travel, are we actually getting
+        // anywhere? Works at any speed or frame-rate (no fragile variance threshold).
+        this._posHist.push({ x: this.snake.x, y: this.snake.y, c: this.clock });
+        while (this._posHist.length && this.clock - this._posHist[0].c > 60) {
+            this._posHist.shift();
+        }
+        if (this._posHist.length > 20) {
+            const p0 = this._posHist[0];
+            const net = Math.hypot(this.snake.x - p0.x, this.snake.y - p0.y);
+            if (net < 18) {
+                this.snake.stuckCounter += 1;
+            } else {
+                this.snake.stuckCounter = Math.max(0, this.snake.stuckCounter - 1);
             }
         }
-        
-        if (distanceMoved < 0.5) {
-            this.snake.stuckCounter++;
-        } else {
-            this.snake.stuckCounter = Math.max(0, this.snake.stuckCounter - 1); // Slowly decrease
-        }
-        
-        this.snake.lastPosition = { x: this.snake.x, y: this.snake.y };
         
         // Track visited cells (grid-based to avoid infinite memory)
         const cellSize = 30;
@@ -742,231 +774,124 @@ class GapSnake {
             }
         }
         
-        const speed = Math.sqrt(this.snake.vx * this.snake.vx + this.snake.vy * this.snake.vy);
         const margin = 10;
-        
-        // If stuck for too long, force a random direction and new waypoint
-        if (this.snake.stuckCounter > 30) { // Much higher threshold - be very patient
-            const randomAngle = Math.random() * Math.PI * 2;
-            this.snake.vx = Math.cos(randomAngle) * speed;
-            this.snake.vy = Math.sin(randomAngle) * speed;
-            this.snake.stuckCounter = 0;
-            this.snake.directionChangeTimer = 50; // Lock in direction even longer
-            this.snake.targetWaypoint = this.findInterestingWaypoint(); // Get new target
-            this.snake.waypointTimer = this.snake.waypointRefreshTime; // Reset waypoint timer
-        }
-        
-        // Look ahead to see if we need to turn - MUCH FURTHER
-        const lookAheadDistance = 30; // Look much further ahead
-        let futureX = this.snake.x + this.snake.vx * lookAheadDistance / speed;
-        let futureY = this.snake.y + this.snake.vy * lookAheadDistance / speed;
-        
-        // Check if our future path is blocked OR if we're revisiting too much
-        let needsNewDirection = false;
-        
-        if (futureX < margin || futureX > this.canvas.width - margin ||
-            futureY < margin || futureY > this.canvas.height - margin ||
-            this.isInOccupiedSpace(futureX, futureY)) {
-            needsNewDirection = true;
-        }
-        
-        // If we've been in this cell too many times recently, explore elsewhere
-        if (cellData.count > 4) { // Increased from 2 - be more tolerant
-            needsNewDirection = true;
-        }
-        
-        // Random exploration (ALMOST NEVER)
-        if (!needsNewDirection && Math.random() < 0.001) { // Reduced from 0.005
-            needsNewDirection = true;
-        }
-        
-        // ANTI-JITTER: Don't change direction too frequently - VERY STRICT
-        if (needsNewDirection && this.snake.directionChangeTimer > 0 && this.snake.stuckCounter < 8) {
-            needsNewDirection = false; // Just keep going!
-        }
-        
-        if (needsNewDirection) {
-            // Set timer to prevent rapid changes - VERY LONG
-            this.snake.directionChangeTimer = 60; // Increased from 40
-            
-            // Generate candidate directions
-            const directions = [];
-            const numDirections = 16;
-            
-            for (let i = 0; i < numDirections; i++) {
-                const angle = (Math.PI * 2 * i) / numDirections;
-                directions.push({
-                    angle: angle,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed
-                });
-            }
-            
-            // Score each direction
-            let bestDirection = null;
-            let bestScore = -Infinity;
-            
-            for (const dir of directions) {
-                let score = 0;
-                let canMove = false;
-                let visitedPenalty = 0;
-                
-                // Test how far we can go in this direction - use snake size awareness
-                for (let step = 1; step <= 60; step++) {
-                    const testX = this.snake.x + dir.vx * step;
-                    const testY = this.snake.y + dir.vy * step;
-                    
-                    if (testX < margin || testX > this.canvas.width - margin ||
-                        testY < margin || testY > this.canvas.height - margin ||
-                        this.isInOccupiedSpace(testX, testY) ||
-                        !this.canSnakePassThrough(testX, testY)) {
-                        break;
-                    }
-                    score++;
-                    if (step > 5) canMove = true;
-                    
-                    // Check if we've been to this area before
-                    if (step % 5 === 0) {
-                        const checkCellX = Math.floor(testX / cellSize);
-                        const checkCellY = Math.floor(testY / cellSize);
-                        const checkKey = `${checkCellX},${checkCellY}`;
-                        if (this.snake.visitedCells.has(checkKey)) {
-                            visitedPenalty += this.snake.visitedCells.get(checkKey).count;
-                        }
-                    }
-                }
-                
-                // Penalize directions that lead to visited areas
-                score -= visitedPenalty * 2; // Reduced from 3
-                
-                // WAYPOINT SEEKING: ABSOLUTELY DOMINANT bonus - gaps must be prioritized
-                if (this.snake.targetWaypoint) {
-                    const toWaypointAngle = Math.atan2(
-                        this.snake.targetWaypoint.y - this.snake.y,
-                        this.snake.targetWaypoint.x - this.snake.x
-                    );
-                    const angleDiffToWaypoint = Math.abs(dir.angle - toWaypointAngle);
-                    const normalizedDiffToWaypoint = Math.min(angleDiffToWaypoint, Math.PI * 2 - angleDiffToWaypoint);
-                    const waypointBonus = (Math.PI - normalizedDiffToWaypoint) / Math.PI * 300; // EXTREME - totally dominates
-                    score += waypointBonus;
-                }
-                
-                // Minimal continuity bonus - gaps are everything
-                const currentAngle = Math.atan2(this.snake.vy, this.snake.vx);
-                const angleDiff = Math.abs(currentAngle - dir.angle);
-                const normalizedDiff = Math.min(angleDiff, Math.PI * 2 - angleDiff);
-                const continuityBonus = this.snake.stuckCounter > 3 ? 
-                    (Math.PI - normalizedDiff) / Math.PI * 3 :
-                    (Math.PI - normalizedDiff) / Math.PI * 10; // Very minimal
-                score += continuityBonus;
-                
-                // Almost no random factor
-                const randomFactor = this.snake.stuckCounter > 3 ? 5 : 1;
-                score += Math.random() * randomFactor;
-                
-                if (score > bestScore && canMove) {
-                    bestScore = score;
-                    bestDirection = dir;
-                }
-            }
-            
-            if (bestDirection) {
-                this.snake.vx = bestDirection.vx;
-                this.snake.vy = bestDirection.vy;
-            } else {
-                // Emergency: try ANY direction
-                let foundEscape = false;
-                for (let i = 0; i < 32; i++) {
-                    const angle = (Math.PI * 2 * i) / 32;
-                    const testVx = Math.cos(angle) * speed;
-                    const testVy = Math.sin(angle) * speed;
-                    const testX = this.snake.x + testVx * 3;
-                    const testY = this.snake.y + testVy * 3;
-                    
-                    if (!this.isInOccupiedSpace(testX, testY) &&
-                        testX >= margin && testX <= this.canvas.width - margin &&
-                        testY >= margin && testY <= this.canvas.height - margin) {
-                        this.snake.vx = testVx;
-                        this.snake.vy = testVy;
-                        foundEscape = true;
-                        break;
-                    }
-                }
-                
-                if (!foundEscape) {
-                    const randomAngle = Math.random() * Math.PI * 2;
-                    this.snake.vx = Math.cos(randomAngle) * speed;
-                    this.snake.vy = Math.sin(randomAngle) * speed;
-                }
-            }
-        }
-        
-        // Variable speed: dart through open space, ease off in tight gaps
-        const headingNow = Math.atan2(this.snake.vy, this.snake.vx);
-        let clearAhead = 0;
-        const probeMax = 55;
-        for (let d = 6; d <= probeMax; d += 6) {
-            const px = this.snake.x + Math.cos(headingNow) * d;
-            const py = this.snake.y + Math.sin(headingNow) * d;
-            if (px < margin || px > this.canvas.width - margin ||
-                py < margin || py > this.canvas.height - margin ||
-                this.isInOccupiedSpace(px, py)) {
-                break;
-            }
-            clearAhead = d;
-        }
-        const openness = clearAhead / probeMax; // 0 = boxed in, 1 = wide open
-        let targetSpeed = this.snake.baseSpeed * (0.8 + openness * 0.75);
-        if (this._curious) targetSpeed *= 1.15; // a little eager when visiting the cursor
-        this.snake.speed += (targetSpeed - this.snake.speed) * 0.06; // ease, don't snap
-        const mag = Math.hypot(this.snake.vx, this.snake.vy) || 1;
-        this.snake.vx = (this.snake.vx / mag) * this.snake.speed;
-        this.snake.vy = (this.snake.vy / mag) * this.snake.speed;
+        const W = this.canvas.width;
+        const H = this.canvas.height;
 
-        // Calculate next position
-        let nextX = this.snake.x + this.snake.vx;
-        let nextY = this.snake.y + this.snake.vy;
-        
-        // Final safety check - use snake size awareness
-        if (!this.isInOccupiedSpace(nextX, nextY) &&
-            this.canSnakePassThrough(nextX, nextY) &&
-            nextX >= margin && nextX <= this.canvas.width - margin &&
-            nextY >= margin && nextY <= this.canvas.height - margin) {
+        // Seed the heading from our current velocity the first time through
+        if (this.snake.heading === undefined) {
+            this.snake.heading = Math.atan2(this.snake.vy, this.snake.vx);
+        }
+        let heading = this.snake.heading;
+
+        // Clear distance along a heading (stops at walls, occupied space or edges)
+        const probe = this.steer.probe;
+        const clearDist = (ang) => {
+            const cx = Math.cos(ang), cy = Math.sin(ang);
+            for (let d = 6; d <= probe; d += 4) {
+                const px = this.snake.x + cx * d;
+                const py = this.snake.y + cy * d;
+                if (px < margin || px > W - margin || py < margin || py > H - margin ||
+                    this.isInOccupiedSpace(px, py) || !this.canSnakePassThrough(px, py)) {
+                    return d;
+                }
+            }
+            return probe;
+        };
+
+        // If we've genuinely got stuck, aim at the most open direction and commit to
+        // escaping it for a beat before resuming normal seeking.
+        if (this.snake.stuckCounter > 22 && this.escapeTimer <= 0) {
+            let bestA = heading, bestC = -1;
+            for (let deg = 0; deg < 360; deg += 15) {
+                const a = deg * Math.PI / 180;
+                const c = clearDist(a);
+                if (c > bestC) { bestC = c; bestA = a; }
+            }
+            heading = this.snake.heading = bestA;
+            this.escapeHeading = bestA;
+            this.escapeTimer = 28;
+            this.snake.stuckCounter = 0;
+            this.snake.targetWaypoint = this.pickRoamWaypoint();
+            this.snake.waypointTimer = this.snake.waypointRefreshTime;
+        }
+
+        // Desired heading: toward the waypoint, with a gentle serpentine weave so it
+        // slithers even on a straight run. (During an escape, just head for open space.)
+        let desired;
+        if (this.escapeTimer > 0) {
+            this.escapeTimer -= dt;
+            desired = this.escapeHeading;
+        } else if (this._curious) {
+            // Sneak straight at the cursor (with a lighter weave). It can't pin a point
+            // tighter than its turn radius, so it naturally circles the pointer.
+            desired = Math.atan2(this.mouse.y - this.snake.y, this.mouse.x - this.snake.x);
+            desired += Math.sin(this.clock * this.slither.freq) * this.slither.amp * 0.4;
+        } else {
+            const wp = this.snake.targetWaypoint;
+            desired = wp
+                ? Math.atan2(wp.y - this.snake.y, wp.x - this.snake.x)
+                : heading;
+            desired += Math.sin(this.clock * this.slither.freq) * this.slither.amp;
+        }
+
+        // Obstacle avoidance: if the desired way isn't clear, slide toward the nearest
+        // heading that is — so it hugs edges and corners instead of ricocheting off them.
+        if (clearDist(desired) < probe) {
+            let best = desired, bestScore = -Infinity;
+            for (let deg = 12; deg <= 165; deg += 12) {
+                for (let s = -1; s <= 1; s += 2) {
+                    const a = desired + s * deg * Math.PI / 180;
+                    const score = clearDist(a) - deg * 0.14; // most clearance, least detour
+                    if (score > bestScore) { bestScore = score; best = a; }
+                }
+            }
+            desired = best;
+        }
+
+        // Ease the heading toward desired at a capped turn rate (sharper only when a
+        // wall is right in front). This gradual turning is what kills the jitter.
+        const front = clearDist(heading);
+        const maxTurn = (front < 16 ? this.steer.maxTurnUrgent : this.steer.maxTurn) * dt;
+        let dh = desired - heading;
+        while (dh > Math.PI) dh -= Math.PI * 2;
+        while (dh < -Math.PI) dh += Math.PI * 2;
+        const turned = Math.max(-maxTurn, Math.min(maxTurn, dh));
+        heading += turned;
+        this.snake.heading = heading;
+
+        // Speed: sneaky and deliberate. Open up in clear space, ease into tight gaps,
+        // and slow down through sharp turns.
+        const openness = Math.min(1, front / probe);
+        let targetSpeed = this.snake.baseSpeed * (0.5 + openness * 0.85);
+        targetSpeed *= 1 - Math.min(Math.abs(turned) / (maxTurn || 1), 1) * 0.45;
+        if (this._curious) targetSpeed *= 1.2;
+        this.snake.speed += (targetSpeed - this.snake.speed) * 0.08 * dt;
+
+        // Integrate. Glide forward, or if the way is blocked, curl toward the clearer
+        // side and try again next frame (so it can never freeze against an edge).
+        const step = this.snake.speed * dt;
+        const nextX = this.snake.x + Math.cos(heading) * step;
+        const nextY = this.snake.y + Math.sin(heading) * step;
+        if (!this.isInOccupiedSpace(nextX, nextY) && this.canSnakePassThrough(nextX, nextY) &&
+            nextX >= margin && nextX <= W - margin && nextY >= margin && nextY <= H - margin) {
             this.snake.x = nextX;
             this.snake.y = nextY;
+        } else {
+            const left = clearDist(heading + Math.PI / 2);
+            const right = clearDist(heading - Math.PI / 2);
+            this.snake.heading = heading + (left >= right ? 1 : -1) * this.steer.maxTurnUrgent * 2 * dt;
+            this.snake.stuckCounter += 2;
         }
-        
-        // Path straightening
-        if (Math.random() < 0.015 && this.snake.stuckCounter === 0 && this.snake.directionChangeTimer === 0) {
-            const angle = Math.atan2(this.snake.vy, this.snake.vx);
-            const snapAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
-            
-            const angleChange = Math.abs(angle - snapAngle);
-            if (angleChange < Math.PI / 8) {
-                let clearPath = true;
-                for (let step = 1; step <= 25; step++) {
-                    const testX = this.snake.x + Math.cos(snapAngle) * speed * step;
-                    const testY = this.snake.y + Math.sin(snapAngle) * speed * step;
-                    if (this.isInOccupiedSpace(testX, testY) ||
-                        testX < margin || testX > this.canvas.width - margin ||
-                        testY < margin || testY > this.canvas.height - margin) {
-                        clearPath = false;
-                        break;
-                    }
-                }
-                
-                if (clearPath) {
-                    this.snake.vx = Math.cos(snapAngle) * speed;
-                    this.snake.vy = Math.sin(snapAngle) * speed;
-                }
-            }
-        }
-    }
 
+        // Keep velocity in sync so the head renders pointing where it travels.
+        this.snake.vx = Math.cos(this.snake.heading) * this.snake.speed;
+        this.snake.vy = Math.sin(this.snake.heading) * this.snake.speed;
+    }
     drawSnake() {
         // Neon serpentine ribbon - indigo palette on black
         const ctx = this.ctx;
-        const t = this.frame;
+        const t = this.clock;
 
         // Body points run tail -> head (head is the live position, not yet in the trail)
         const pts = this.snake.trail.concat([{ x: this.snake.x, y: this.snake.y }]);
