@@ -5,6 +5,9 @@
     'noindex' => false,
 ])
 @php
+    // Home passes a full, keyword-rich title; inner pages get the brand suffix.
+    // Computed once so <title>, meta title and OG/Twitter titles never drift.
+    $pageTitle = request()->is('/') ? $title : $title . ' | Alex Davies';
     $metaDescription = $description ?: 'Software developer specializing in PHP, JavaScript, Python and C++. View my portfolio of projects including web applications, 3D CAD, and automation tools.';
     $metaImage = $image
         ? (\Illuminate\Support\Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))
@@ -16,7 +19,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ request()->is('/') ? 'Alex Davies | Developer' : $title . ' | Alex Davies' }}</title>
+        <title>{{ $pageTitle }}</title>
         @if($noindex)
             <meta name="robots" content="noindex, nofollow">
         @else
@@ -24,15 +27,14 @@
         @endif
 
         <!-- Primary Meta Tags -->
-        <meta name="title" content="{{ request()->is('/') ? 'Alex Davies | Developer' : $title . ' | Alex Davies' }}">
+        <meta name="title" content="{{ $pageTitle }}">
         <meta name="description" content="{{ $metaDescription }}">
-        <meta name="keywords" content="software developer, web developer, PHP developer, JavaScript developer, Python developer, C++ developer, {{ $title ?? '' }}">
         <meta name="author" content="Alex Davies">
 
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url()->current() }}">
-        <meta property="og:title" content="{{ request()->is('/') ? 'Alex Davies | Developer' : $title . ' | Alex Davies' }}">
+        <meta property="og:title" content="{{ $pageTitle }}">
         <meta property="og:description" content="{{ $metaDescription }}">
         <meta property="og:image" content="{{ $metaImage }}">
         @unless($image)
@@ -45,7 +47,7 @@
         <!-- Twitter -->
         <meta property="twitter:card" content="summary_large_image">
         <meta property="twitter:url" content="{{ url()->current() }}">
-        <meta property="twitter:title" content="{{ request()->is('/') ? 'Alex Davies | Developer' : $title . ' | Alex Davies' }}">
+        <meta property="twitter:title" content="{{ $pageTitle }}">
         <meta property="twitter:description" content="{{ $metaDescription }}">
         <meta property="twitter:image" content="{{ $metaImage }}">
 
