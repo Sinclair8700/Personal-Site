@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\Education;
 class EducationController extends Controller
 {
@@ -19,7 +20,8 @@ class EducationController extends Controller
         $education = Education::where('slug', $slug)->firstOrFail();
 
         return view('education.show', [
-            'title' => $education->name, 
+            'title' => $education->name,
+            'description' => Str::limit(strip_tags($education->description ?? ''), 155),
             'education' => $education
         ]);
     }

@@ -13,6 +13,22 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    # Canonical origin — force HTTPS + non-www so every page has one indexable
+    # URL. Gated on the production host so staging/local domains are untouched.
+    # Keying HTTPS detection off X-Forwarded-Proto (not %{HTTPS}) avoids an
+    # infinite redirect loop when TLS is terminated at a proxy like Cloudflare.
+    RewriteCond %{HTTP_HOST} (^|\.)alexdavi\.es$ [NC]
+    RewriteCond %{HTTP:X-Forwarded-Proto} =http
+    RewriteRule ^ https://alexdavi.es%{REQUEST_URI} [L,R=301]
+
+    RewriteCond %{HTTP_HOST} (^|\.)alexdavi\.es$ [NC]
+    RewriteCond %{HTTP:X-Forwarded-Proto} ^$
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://alexdavi.es%{REQUEST_URI} [L,R=301]
+
+    RewriteCond %{HTTP_HOST} ^www\.alexdavi\.es$ [NC]
+    RewriteRule ^ https://alexdavi.es%{REQUEST_URI} [L,R=301]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$

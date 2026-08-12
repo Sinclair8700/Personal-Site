@@ -1,4 +1,4 @@
-<x-page :title="$title" :description="$education->description">
+<x-page :title="$title" :description="$description ?? null">
     @php
         $breadcrumbLd = [
             '@context' => 'https://schema.org',

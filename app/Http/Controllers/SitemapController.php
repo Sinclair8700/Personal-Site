@@ -10,7 +10,9 @@ class SitemapController extends Controller
     public function index()
     {
         $content = view('sitemap', [
-            'projects' => Project::all(),
+            // Only projects that have images — mirrors the /projects index and
+            // keeps thin, empty project pages out of the sitemap.
+            'projects' => Project::whereHas('images')->get(),
             'education' => Education::all()
         ]);
         

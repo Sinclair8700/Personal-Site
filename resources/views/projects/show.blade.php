@@ -3,15 +3,26 @@
         $description = $description ?? null;
         $image = $image ?? null;
         $projectName = $project->getRawOriginal('name');
+        // A code project with a repo link gets the more specific SoftwareSourceCode
+        // type + codeRepository; anything else (CAD, electronics, demos) stays a
+        // generic CreativeWork with the link recorded as sameAs.
+        $projectLink = $project->link ?: null;
+        $isRepo = $projectLink && \Illuminate\Support\Str::contains($projectLink, ['github.com', 'gitlab.com', 'bitbucket.org']);
         $projectLd = [
             '@context' => 'https://schema.org',
-            '@type' => 'CreativeWork',
+            '@type' => $isRepo ? 'SoftwareSourceCode' : 'CreativeWork',
             'name' => $projectName,
             'url' => url()->current(),
             'author' => ['@type' => 'Person', 'name' => 'Alex Davies'],
         ];
+        if ($project->updated_at) { $projectLd['dateModified'] = $project->updated_at->toAtomString(); }
         if ($description) { $projectLd['abstract'] = $description; }
         if ($image) { $projectLd['image'] = asset($image); }
+        if ($isRepo) {
+            $projectLd['codeRepository'] = $projectLink;
+        } elseif ($projectLink) {
+            $projectLd['sameAs'] = [$projectLink];
+        }
         $breadcrumbLd = [
             '@context' => 'https://schema.org',
             '@type' => 'BreadcrumbList',

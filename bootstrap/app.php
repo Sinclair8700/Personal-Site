@@ -14,6 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Trust the proxy's X-Forwarded-Proto/Host (e.g. Cloudflare) so
+        // url()->current(), asset() and the canonical/OG tags resolve to https
+        // and the real host instead of the internal http request. Narrow `at`
+        // to Cloudflare's published IP ranges if the origin is publicly reachable.
+        $middleware->trustProxies(at: '*');
+
         $middleware->appendToGroup('web', RecordPageVisit::class);
         $middleware->appendToGroup('web', SecurityHeaders::class);
     })
