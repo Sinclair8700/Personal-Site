@@ -33,6 +33,7 @@ class GapSnake {
         this.clock = 0;          // frame-rate–independent time (advances ~1 per 60fps frame)
         this._lastT = 0;
         this._posHist = [];      // recent positions, for stuck detection
+        this._loopHist = [];     // down-sampled positions, for loop/confinement detection
         this.trailSpacing = 3.2; // px between body points (x maxTrailLength = body length ~140px)
         this.wave = { amp: 1.8, freq: 7.0, speed: 0.22 }; // travelling serpentine wave down the body
 
@@ -790,7 +791,33 @@ class GapSnake {
                 this.snake.stuckCounter = Math.max(0, this.snake.stuckCounter - 1);
             }
         }
-        
+
+        // Confinement / boredom: the 1-second check above only catches hard bounces. This
+        // catches the slower failure — gliding back and forth in a wide corridor, or looping
+        // in one area, for a long time while the rest of the page goes unexplored. We compare
+        // total distance travelled against net progress over a ~7s window: lots of travel but
+        // little net movement means we're going nowhere, so force a relocation to open space.
+        const lh = this._loopHist;
+        if (this._curious) {
+            lh.length = 0; // don't count cursor-orbiting as being stuck
+        } else {
+            if (!lh.length || this.clock - lh[lh.length - 1].c >= 8) {
+                lh.push({ x: this.snake.x, y: this.snake.y, c: this.clock });
+                while (lh.length && this.clock - lh[0].c > 420) lh.shift(); // keep ~7s
+            }
+            if (lh.length > 40) {
+                let path = 0;
+                for (let i = 1; i < lh.length; i++) {
+                    path += Math.hypot(lh[i].x - lh[i - 1].x, lh[i].y - lh[i - 1].y);
+                }
+                const net = Math.hypot(this.snake.x - lh[0].x, this.snake.y - lh[0].y);
+                if (path > 380 && net < path * 0.3) {
+                    this.snake.stuckCounter = 999; // wandered a lot but got nowhere → relocate
+                    lh.length = 0;
+                }
+            }
+        }
+
         // Track visited cells (grid-based to avoid infinite memory)
         const cellSize = 30;
         const cellX = Math.floor(this.snake.x / cellSize);
