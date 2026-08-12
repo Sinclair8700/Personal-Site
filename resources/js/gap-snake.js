@@ -294,6 +294,10 @@ class GapSnake {
             
             const isBorderedContainer = hasVisibleBorder && child.children.length > 0;
             
+            // Real text content (a paragraph/span with its own text) vs a structural
+            // wrapper. Must be marked even when WIDE, or the snake sails over body text.
+            const isTextContent = hasDirectTextNodes || (isTextElement && hasAnyText && isLeaf);
+
             const shouldMarkAsOccupied = isBorderedContainer || // Bordered sections - mark the whole box (EVEN IF LARGE)
                                         isInteractiveElement ||
                                         hasDirectTextNodes || // Direct text in this element
@@ -303,8 +307,8 @@ class GapSnake {
                                         (hasBoxShadow && isLeaf) ||
                                         (hasVisibleBackground && isLeaf);
             
-            // For bordered containers, IGNORE the large container check
-            if (shouldMarkAsOccupied && (!isLargeContainer || isBorderedContainer)) {
+            // Bordered sections and real text content ignore the large-container skip.
+            if (shouldMarkAsOccupied && (!isLargeContainer || isBorderedContainer || isTextContent)) {
                 // If this is a bordered container, remember it so we skip its descendants
                 if (isBorderedContainer) {
                     markedBorderedContainers.add(child);
@@ -651,22 +655,24 @@ class GapSnake {
     }
 
     pickRoamWaypoint() {
-        // Prefer waypoints that are far away and roughly ahead of us, so the snake
-        // prowls onward instead of doubling back and coiling on a nearby target.
-        let best = null;
-        for (let i = 0; i < 6; i++) {
+        // Trust findInterestingWaypoint's gap prioritisation — diving into narrow gaps is
+        // the whole point of a gap snake. Just skip targets that are in a no-go zone, too
+        // close (would make it orbit) or sharply behind us (would make it coil). Take the
+        // first good one so gaps aren't passed over in favour of distant open space.
+        let fallback = null;
+        for (let i = 0; i < 8; i++) {
             const wp = this.findInterestingWaypoint();
-            if (!wp || this.inAvoidZone(wp.x, wp.y)) continue; // don't re-target a spot we just got stuck in
+            if (!wp || this.inAvoidZone(wp.x, wp.y)) continue;
             const dx = wp.x - this.snake.x;
             const dy = wp.y - this.snake.y;
             const dist = Math.hypot(dx, dy) || 1;
-            const ahead = this.snake.heading === undefined ? 0 :
+            if (dist < 50) continue; // too close → would orbit; keep looking
+            if (!fallback) fallback = wp;
+            const ahead = this.snake.heading === undefined ? 1 :
                 (Math.cos(this.snake.heading) * dx + Math.sin(this.snake.heading) * dy) / dist;
-            const score = dist + ahead * 180; // far + ahead wins
-            if (!best || score > best.score) best = { wp, score };
-            if (dist > 200 && ahead > -0.1) break; // already a good prowl target
+            if (ahead > -0.35) return wp; // not a hard U-turn → take this gap target
         }
-        return best ? best.wp : this.findInterestingWaypoint();
+        return fallback || this.findInterestingWaypoint();
     }
 
     inAvoidZone(x, y, radius = 150) {
