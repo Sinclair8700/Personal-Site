@@ -53,6 +53,13 @@
 
 }
 
+/* Mobile nav drawer: full-width, left-aligned tap targets (see mobile-nav.js). */
+.nav-mobile > a,
+.nav-mobile > form > button,
+.nav-mobile .dropdown a {
+  width: 100%;
+}
+
 /* Pinned bar in the dashboard readout charts (see dashboard-charts.js). */
 .chart-bar.is-pinned .chart-bar__fill {
   background-color: var(--color-purple);

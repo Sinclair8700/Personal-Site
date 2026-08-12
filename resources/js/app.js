@@ -1,5 +1,6 @@
 import './bootstrap';
 import './dropdowns';
+import './mobile-nav';
 import './api-sandbox';
 import './text-scroller';
 import './file-upload';

@@ -9,7 +9,9 @@ function handle_dropdown_close(el, in_activator, in_dropdown){
     el.querySelector('.dropdown').classList.add('hidden')
 }
 
-Array.from(document.querySelectorAll('.dropdown-container')).forEach((el) =>{
+// Desktop-only hover dropdowns. The mobile drawer copies use a tap accordion
+// instead (see mobile-nav.js), so scope this to the desktop nav.
+Array.from(document.querySelectorAll('.nav-desktop .dropdown-container')).forEach((el) =>{
     let in_activator = false
     let in_dropdown = false
     let activator_timeout = null
