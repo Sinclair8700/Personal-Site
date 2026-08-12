@@ -1,4 +1,4 @@
-<x-page :title="$title" :description="$description">
+<x-page :title="$title" :description="$description ?? null">
     <x-content type="wide" class="py-6">
         
         <x-slot name="leftGutter" class="snow">

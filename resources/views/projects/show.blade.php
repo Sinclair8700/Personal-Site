@@ -1,5 +1,7 @@
-<x-page :title="$title" :description="$description" :image="$image">
+<x-page :title="$title" :description="$description ?? null" :image="$image ?? null">
     @php
+        $description = $description ?? null;
+        $image = $image ?? null;
         $projectName = $project->getRawOriginal('name');
         $projectLd = [
             '@context' => 'https://schema.org',
