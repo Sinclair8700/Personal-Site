@@ -36,9 +36,11 @@ class AccountController extends Controller
         return view('account.sign-up', ['title' => 'Sign Up']);
     }
 
-    public function signOut()
+    public function signOut(Request $request)
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('login');
     }
 
