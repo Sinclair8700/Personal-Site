@@ -15,33 +15,69 @@
             </x-bubble>
         </div>
 
+        {{-- New visitors --}}
         <x-bubble class="mt-6">
             <div class="flex items-baseline justify-between mb-4">
                 <h3>New visitors</h3>
                 <span class="text-white/50 text-sm">last 30 days</span>
             </div>
 
-            @php $trend = collect($trend ?? []); @endphp
-            @if ($trend->isNotEmpty())
-                @php $max = max(1, $trend->max('count')); @endphp
-                <div class="flex items-end gap-1 h-40">
-                    @foreach ($trend as $day)
-                        <div class="group relative flex-1 flex flex-col justify-end h-full" aria-label="{{ $day['label'] }}: {{ $day['count'] }} new visitors">
-                            <div class="w-full rounded-t bg-white/80 hover:bg-purple transition-colors"
-                                style="height: {{ $day['count'] === 0 ? '2px' : round(($day['count'] / $max) * 100, 2) . '%' }}"></div>
-                            <div class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block whitespace-nowrap rounded bg-white text-black text-xs px-2 py-1 z-10">
-                                {{ $day['label'] }}: {{ $day['count'] }}
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                <div class="flex justify-between text-white/40 text-xs mt-2">
-                    <span>{{ $trend->first()['label'] }}</span>
-                    <span>{{ $trend->last()['label'] }}</span>
-                </div>
-            @else
-                <p class="text-white/50">No visitor data yet.</p>
-            @endif
+            @php
+                $visitorTrend = collect($visitorTrend ?? []);
+                $visitorPeak = $visitorTrend->sortByDesc('count')->first();
+            @endphp
+
+            <x-bar-chart :trend="$visitorTrend" type="visitors" unit="new visitors" empty="No visitor data yet.">
+                <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
+                    <dt class="text-white/60">30-day total</dt>
+                    <dd class="text-white text-right font-medium">{{ $visitorTrend->sum('count') }}</dd>
+                    <dt class="text-white/60">Busiest day</dt>
+                    <dd class="text-white text-right font-medium">
+                        {{ $visitorPeak && $visitorPeak['count'] > 0 ? $visitorPeak['label'].' ('.$visitorPeak['count'].')' : '—' }}
+                    </dd>
+                </dl>
+                <p class="text-white/40 text-xs mt-3">Hover a bar for a day&rsquo;s detail &middot; click to pin it.</p>
+            </x-bar-chart>
+        </x-bubble>
+
+        {{-- Messages --}}
+        <x-bubble class="mt-6" id="messages">
+            <div class="flex items-baseline justify-between mb-4">
+                <h3>Messages</h3>
+                <span class="text-white/50 text-sm">last 30 days</span>
+            </div>
+
+            @php $messages = collect($messages ?? []); @endphp
+
+            <x-bar-chart :trend="$messageTrend ?? []" type="messages" unit="messages" empty="No messages yet.">
+                @if ($messages->isNotEmpty())
+                    <div class="text-white/50 text-xs mb-2">Most recent messages &middot; last 30 days</div>
+                    <div class="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20">
+                        <table class="w-full text-sm border-collapse">
+                            <thead>
+                                <tr class="text-white/50 text-xs text-left">
+                                    <th class="font-medium py-1 pr-3 sticky top-0 bg-black">When</th>
+                                    <th class="font-medium py-1 pr-3 sticky top-0 bg-black">Email</th>
+                                    <th class="font-medium py-1 sticky top-0 bg-black">Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($messages as $message)
+                                    <tr class="border-t border-white/10 align-top">
+                                        <td class="py-2 pr-3 text-white/60 whitespace-nowrap">{{ $message->created_at->format('M j, g:i a') }}</td>
+                                        <td class="py-2 pr-3 text-white whitespace-nowrap">
+                                            <a href="mailto:{{ $message->email_address }}" class="underline decoration-white/20 hover:text-purple">{{ $message->email_address }}</a>
+                                        </td>
+                                        <td class="py-2 text-white/80">{{ $message->message }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-white/50 text-sm">No messages in the last 30 days.</p>
+                @endif
+            </x-bar-chart>
         </x-bubble>
 
         <div class="mt-6">

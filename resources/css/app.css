@@ -52,3 +52,9 @@
   }
 
 }
+
+/* Pinned bar in the dashboard readout charts (see dashboard-charts.js). */
+.chart-bar.is-pinned .chart-bar__fill {
+  background-color: var(--color-purple);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-purple) 45%, transparent);
+}
