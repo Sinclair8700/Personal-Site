@@ -65,3 +65,19 @@
   background-color: var(--color-purple);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-purple) 45%, transparent);
 }
+
+/*
+  Respect prefers-reduced-motion: collapse CSS transitions/animations to near-
+  instant for visitors who ask for less motion. The continuous JS canvas effects
+  (snow, gap-snake) and the carousel autoplay are disabled in their own scripts.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

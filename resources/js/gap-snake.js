@@ -1117,10 +1117,16 @@ class GapSnake {
     }
 }
 
-// Initialize gap snake effect on all elements with gap-snake class
+// Initialize gap snake effect on all elements with gap-snake class.
+// The snake is a purely decorative, constantly-moving background — exactly the
+// kind of motion prefers-reduced-motion is meant to suppress — so skip it there.
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
     const gapSnakeElements = document.querySelectorAll('.gap-snake');
-    
+
     gapSnakeElements.forEach(element => {
         new GapSnake(element);
     });

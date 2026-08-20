@@ -48,6 +48,7 @@
                         <img src="{{ asset('storage/projects/'.$project->slug.'/'.$image->filename) }}"
                             alt="{{ $project->name }} — screenshot {{ $loop->iteration }}"
                             loading="lazy"
+                            decoding="async"
                             class="w-full h-auto object-cover rounded-lg">
                     @endforeach
                 </div>

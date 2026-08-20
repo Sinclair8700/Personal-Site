@@ -1,4 +1,4 @@
-document.querySelectorAll('.popover').forEach(popover => {
+document.querySelectorAll('.popover').forEach((popover, index) => {
     // Store the original popover for reference
     let popover_clone = null;
     let parent = popover.parentElement;
@@ -6,6 +6,17 @@ document.querySelectorAll('.popover').forEach(popover => {
     let in_popover = false;
     let parent_timeout = null;
     let popover_timeout = null;
+
+    // Give each popover a stable id and expose it to assistive tech via the
+    // trigger's aria-describedby while it's open (WCAG 1.4.13). Triggers that
+    // aren't already focusable are made keyboard-reachable so their content
+    // isn't mouse-only.
+    const popoverId = `popover-tt-${index}`;
+    const nativelyFocusable = /^(a|button|input|select|textarea)$/i.test(parent.tagName)
+        || parent.hasAttribute('tabindex');
+    if (!nativelyFocusable) {
+        parent.setAttribute('tabindex', '0');
+    }
 
     function handle_popover_open() {
         // Create a fresh clone each time to ensure proper state
@@ -19,7 +30,12 @@ document.querySelectorAll('.popover').forEach(popover => {
         
         // First append to the DOM so we can get accurate measurements
         document.querySelector('#body').appendChild(popover_clone);
-        
+
+        // Associate the tooltip with its trigger for assistive tech.
+        popover_clone.id = popoverId;
+        popover_clone.setAttribute('role', 'tooltip');
+        parent.setAttribute('aria-describedby', popoverId);
+
         let rect = parent.getBoundingClientRect();
         let scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -87,6 +103,7 @@ document.querySelectorAll('.popover').forEach(popover => {
         if(in_parent || in_popover) {
             return;
         }
+        parent.removeAttribute('aria-describedby');
         if (popover_clone && popover_clone.parentElement) {
             popover_clone.classList.add('hidden');
             document.querySelector('#body').removeChild(popover_clone);
@@ -115,13 +132,42 @@ document.querySelectorAll('.popover').forEach(popover => {
         }, 100);
     });
 
-    window.addEventListener('touchstart', (e) => {   
+    window.addEventListener('touchstart', (e) => {
         if (popover_clone && popover_clone.contains(e.target))
             return;
         in_popover = false;
         popover_timeout = setTimeout(() => {
             handle_popover_close(in_parent, in_popover);
         }, 100);
+    });
+
+    // Keyboard users: reveal the popover when the trigger receives focus and
+    // hide it when focus leaves (mirrors the mouseover/mouseout behaviour).
+    parent.addEventListener('focusin', function() {
+        in_parent = true;
+        if(parent_timeout) {
+            clearTimeout(parent_timeout);
+            parent_timeout = null;
+        }
+        if(popover_timeout) {
+            clearTimeout(popover_timeout);
+            popover_timeout = null;
+        }
+        handle_popover_open();
+    });
+
+    parent.addEventListener('focusout', function() {
+        in_parent = false;
+        parent_timeout = setTimeout(() => {
+            handle_popover_close(in_parent, in_popover);
+        }, 100);
+    });
+
+    // Escape dismisses the popover without moving focus (WCAG 1.4.13).
+    parent.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && popover_clone) {
+            handle_popover_close(false, false);
+        }
     });
 });
 

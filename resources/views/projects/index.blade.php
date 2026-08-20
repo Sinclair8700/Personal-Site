@@ -8,7 +8,7 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             @foreach ($projects as $project)
-                <x-project :project="$project"/>
+                <x-project :project="$project" :eager="$loop->first"/>
             @endforeach
         </div>
     </x-content>

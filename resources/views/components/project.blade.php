@@ -1,5 +1,9 @@
 @props([
     'project' => null,
+    // Eagerly load this card's first image (use only for an above-the-fold LCP
+    // image, e.g. the first card in a grid). In the homepage carousel every card
+    // stays lazy so Swiper only fetches the slides in view.
+    'eager' => false,
 ])
 @php
     $images = $project?->images ?? collect();
@@ -21,7 +25,8 @@
                         <img src="{{ asset('storage/projects/'.$project->slug.'/'.$image->filename) }}"
                             alt="{{ $project->name ?? null }}"
                             class="w-full h-full object-cover rounded-t-md xs:rounded-t-none sm:rounded-r-md"
-                            loading="{{ $loop->first ? 'eager' : 'lazy' }}">
+                            loading="{{ $eager && $loop->first ? 'eager' : 'lazy' }}"
+                            decoding="async">
                         @if(!$loop->first)
                         <div class="swiper-lazy-preloader"></div>
                         @endif

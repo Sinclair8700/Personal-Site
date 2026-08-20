@@ -39,10 +39,11 @@
                             <x-project :project="$project" class="xs:inline hidden"/>
 
                             <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block xs:hidden border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
-                                <img 
-                                    src="{{ asset('storage/projects/'.$project->slug.'/'.$primaryImage->filename) }}" 
-                                    alt="{{ $project->name }}" 
+                                <img
+                                    src="{{ asset('storage/projects/'.$project->slug.'/'.$primaryImage->filename) }}"
+                                    alt="{{ $project->name }}"
                                     loading="lazy"
+                                    decoding="async"
                                     class="w-full h-full object-cover">
                                 <div class="absolute top-0 bottom-0 left-0 right-0 bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300">
                                     <h2 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center">{{ $project->name }}</h2>
@@ -55,17 +56,18 @@
             </div>
         </div>
 
+        <h2 class="sr-only">About me &amp; skills</h2>
         <div class="grid grid-cols-12 gap-6">
             <x-bubble class="col-span-12 sm:col-span-6 lg:col-span-4">
                 <h3>
                     Socials
                 </h3>
                 <ul class="list-disc list-inside">
-                    <li><span class="underline cursor-pointer copy-value" data-value="alex_8700">Discord
+                    <li><button type="button" class="underline cursor-pointer copy-value text-left" data-value="alex_8700" aria-label="Copy Discord username alex_8700">Discord
                             <x-popover position="bottom">
                                 Click to copy alex_8700
                             </x-popover>
-                        </span>
+                        </button>
                     </li>
                     <li><a class="underline" href="https://steamcommunity.com/id/a-l-ex" target="_blank" rel="noopener noreferrer">Steam</a></li>
                     <li><a class="underline" href="https://github.com/Sinclair8700" target="_blank" rel="noopener noreferrer">Github</a></li>

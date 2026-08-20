@@ -102,10 +102,16 @@ class Snow {
     }
 }
 
-// Initialize snow effect on all elements with snow class
+// Initialize snow effect on all elements with snow class.
+// Respect prefers-reduced-motion: skip the continuous animation entirely for
+// visitors who ask for less motion (also saves CPU/battery).
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
     const snowElements = document.querySelectorAll('.snow');
-    
+
     snowElements.forEach(element => {
         new Snow(element);
     });
