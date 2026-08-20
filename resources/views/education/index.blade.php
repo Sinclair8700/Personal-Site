@@ -1,4 +1,24 @@
 <x-page :title="$title" :description="$description ?? null">
+    @php
+        $educationItems = $education->values();
+        $itemListLd = [
+            '@context' => 'https://schema.org',
+            '@type' => 'CollectionPage',
+            'name' => 'Education',
+            'url' => url()->current(),
+            'mainEntity' => [
+                '@type' => 'ItemList',
+                'numberOfItems' => $educationItems->count(),
+                'itemListElement' => $educationItems->map(fn ($e, $i) => [
+                    '@type' => 'ListItem',
+                    'position' => $i + 1,
+                    'url' => url('/education/' . $e->slug),
+                    'name' => $e->getRawOriginal('name'),
+                ])->all(),
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($itemListLd, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
     <x-content type="wide" class="py-6">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             @foreach ($education as $item)

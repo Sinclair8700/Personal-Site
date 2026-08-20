@@ -8,16 +8,16 @@
 
         <x-form  action="{{ route('register') }}" method="POST">
             @csrf
-            <x-input type="text" name="name" >
+            <x-input type="text" name="name" autocomplete="name" >
                 Name
             </x-input>
-            <x-input type="email" name="email" >
+            <x-input type="email" name="email" autocomplete="email" >
                 Email
             </x-input>
-            <x-input type="password" name="password" >
+            <x-input type="password" name="password" autocomplete="new-password" >
                 Password
             </x-input>
-            <x-input type="password" name="password_confirmation" >
+            <x-input type="password" name="password_confirmation" autocomplete="new-password" >
                 Confirm Password
             </x-input>
             <x-button type="submit">Sign Up</x-button>

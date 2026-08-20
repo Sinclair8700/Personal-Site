@@ -7,7 +7,7 @@
         </x-slot>
         
         <x-form method="POST" action="{{ route('contact.store') }}">
-            <x-input name="email_address" type="text">Email</x-input>
+            <x-input name="email_address" type="email" autocomplete="email">Email</x-input>
             <x-input name="message" type="textarea">Message</x-input>
 
             {{-- Honeypot: hidden from people; bots that auto-fill every field trip it --}}

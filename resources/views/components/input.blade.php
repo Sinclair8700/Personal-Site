@@ -5,8 +5,25 @@
     'file' => null,
 ])
 
+@php
+    // A DOM-safe id shared by the label and the control. The previous markup set
+    // `for` on the label but never an `id` on the input, so the two were never
+    // actually associated (WCAG 1.3.1 / 4.1.2). Strip array brackets etc. so
+    // names like `images[]` still yield a valid, matching id.
+    $inputId = 'field-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', trim((string) $name, '[]'));
+
+    // Resolve the validation error for this field (supports `foo` and `foo.*`).
+    $errorKey = str_ends_with($name, '[]') ? substr($name, 0, -2) : $name;
+    $errorMsg = $errors->first($errorKey)
+        ?? collect($errors->getMessageBag()->getMessages())
+            ->filter(fn ($_, $k) => str_starts_with($k, $errorKey . '.'))
+            ->flatten()
+            ->first();
+    $errorId = $errorMsg ? $inputId . '-error' : null;
+@endphp
+
 <div class="flex flex-col gap-1">
-    <label for="{{ $name }}" class=" text-sm/6 font-medium text-white">{{ $slot }}</label>
+    <label for="{{ $inputId }}" class=" text-sm/6 font-medium text-white">{{ $slot }}</label>
 
     <x-bubble
         class="{{ $type == 'file' ? 'relative h-24 max-h-24 overflow-hidden group' : '' }} rounded-md bg-transparent [&]:px-0 [&]:py-0">
@@ -32,20 +49,12 @@
         @endif
 
         @if($type == 'textarea')
-            <textarea name="{{ $name }}"  {{ $attributes->merge(['class' => 'block min-w-0 w-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 h-[92px]']) }}>{{ $attributes->get('value') }}</textarea>
+            <textarea name="{{ $name }}" id="{{ $inputId }}" @if($errorMsg) aria-invalid="true" aria-describedby="{{ $errorId }}" @endif {{ $attributes->merge(['class' => 'block min-w-0 w-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 h-[92px]']) }}>{{ $attributes->get('value') }}</textarea>
         @else
-            <input name="{{ $name }}" type="{{ $type }}" {{ $attributes->merge(['class' => ($type == 'file' ? 'opacity-0' : '') . ' block min-w-0 w-full h-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6']) }}/>
+            <input name="{{ $name }}" id="{{ $inputId }}" type="{{ $type }}" @if($errorMsg) aria-invalid="true" aria-describedby="{{ $errorId }}" @endif {{ $attributes->merge(['class' => ($type == 'file' ? 'opacity-0' : '') . ' block min-w-0 w-full h-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6']) }}/>
         @endif
     </x-bubble>
-    @php
-        $errorKey = str_ends_with($name, '[]') ? substr($name, 0, -2) : $name;
-        $errorMsg = $errors->first($errorKey)
-            ?? collect($errors->getMessageBag()->getMessages())
-                ->filter(fn ($_, $k) => str_starts_with($k, $errorKey . '.'))
-                ->flatten()
-                ->first();
-    @endphp
     @if($errorMsg)
-        <p class="text-red-500">{{ $errorMsg }}</p>
+        <p id="{{ $errorId }}" class="text-red-500">{{ $errorMsg }}</p>
     @endif
 </div>

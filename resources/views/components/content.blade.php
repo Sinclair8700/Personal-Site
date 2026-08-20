@@ -29,7 +29,7 @@
     }}>
         @once
             @if(session('success'))
-                <x-bubble class="mb-4">
+                <x-bubble class="mb-4" role="status" aria-live="polite">
                     <p class="text-white">{{ session('success') }}</p>
                 </x-bubble>
             @endif

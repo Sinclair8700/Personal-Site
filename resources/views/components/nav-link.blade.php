@@ -4,7 +4,7 @@
 ])
 
 @if ($type === 'a')
-<a {{ $attributes->merge(['class' => $active ? 'w-max bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'w-max text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium']) }} >
+<a @if($active) aria-current="page" @endif {{ $attributes->merge(['class' => $active ? 'w-max bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium' : 'w-max text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium']) }} >
     {{ $slot }}
 </a>
 @elseif ($type === 'button')

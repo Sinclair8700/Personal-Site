@@ -7,10 +7,10 @@
         </x-slot>
         <x-form  action="{{ route('login') }}" method="POST">
             @csrf
-            <x-input type="email" name="email" >
+            <x-input type="email" name="email" autocomplete="email" >
                 Email
             </x-input>
-            <x-input type="password" name="password" >
+            <x-input type="password" name="password" autocomplete="current-password" >
                 Password
             </x-input>
             <x-button type="submit">Sign In</x-button>
