@@ -54,6 +54,11 @@
                 </div>
             @endif
             <p class="text-justify">{{ $project->description }}</p>
+            @if($projectLink)
+                <x-button type="a" href="{{ $projectLink }}" target="_blank" rel="noopener" class="inline-block mt-4">
+                    {{ $isRepo ? 'View the source code' : 'Try it live' }}
+                </x-button>
+            @endif
             <div class="clear-both"></div>
         </div>
 
