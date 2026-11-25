@@ -40,6 +40,13 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
+# The server's mime.types predates WebP/AVIF, so declare them; otherwise these
+# images go out with no Content-Type and the ExpiresByType rules below skip them.
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+    AddType image/avif .avif
+</IfModule>
+
 # ----------------------------------------------------------------------
 # Compression — shrink text assets (HTML, CSS, JS, JSON, XML, SVG) on the wire.
 # Brotli preferred where available, gzip/deflate as a fallback.
