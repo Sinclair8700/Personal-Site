@@ -1,7 +1,16 @@
+// Show the "scroll for more" fade while the list has items below the visible area.
+function update_scroll_hint(el){
+    const scroller = el.querySelector('.dropdown-scroll')
+    if(!scroller) return
+    const more_below = scroller.scrollTop + scroller.clientHeight < scroller.scrollHeight - 4
+    scroller.classList.toggle('has-more', more_below)
+}
+
 function handle_dropdown_open(el){
     el.querySelector('.dropdown').classList.remove('hidden')
     const activator = el.querySelector('.activator')
     if(activator) activator.setAttribute('aria-expanded', 'true')
+    update_scroll_hint(el)
 }
 
 function handle_dropdown_close(el, in_activator, in_dropdown){
@@ -20,6 +29,12 @@ Array.from(document.querySelectorAll('.nav-desktop .dropdown-container')).forEac
     let in_dropdown = false
     let activator_timeout = null
     let dropdown_timeout = null
+
+    const scroller = el.querySelector('.dropdown-scroll')
+    if(scroller){
+        scroller.addEventListener('scroll', () => update_scroll_hint(el), { passive: true })
+        window.addEventListener('resize', () => update_scroll_hint(el), { passive: true })
+    }
 
     // Advertise the submenu to assistive tech and reflect its open state.
     const activator = el.querySelector('.activator')

@@ -19,6 +19,7 @@ class ProjectController extends Controller
     {
         $projects = Project::with('images')
             ->whereHas('images')
+            ->ordered()
             ->get();
         return view('projects.index', [
             'title' => 'Projects',

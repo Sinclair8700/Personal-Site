@@ -7,7 +7,10 @@
 @php
     // Home passes a full, keyword-rich title; inner pages get the brand suffix.
     // Computed once so <title>, meta title and OG/Twitter titles never drift.
-    $pageTitle = request()->is('/') ? $title : $title . ' | Alex Davies';
+    // Titles can arrive already escaped (project names are HtmlStrings), so decode once
+    // here and let {{ }} escape once below; otherwise "&" shows up as "&amp;".
+    $plainTitle = html_entity_decode((string) $title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $pageTitle = request()->is('/') ? $plainTitle : $plainTitle . ' | Alex Davies';
     $metaDescription = $description ?: 'Software developer specializing in PHP, JavaScript, Python and C++. View my portfolio of projects including web applications, 3D CAD, and automation tools.';
     $metaImage = $image
         ? (\Illuminate\Support\Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))

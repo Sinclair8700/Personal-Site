@@ -49,7 +49,7 @@
         @endif
 
         @if($type == 'textarea')
-            <textarea name="{{ $name }}" id="{{ $inputId }}" @if($errorMsg) aria-invalid="true" aria-describedby="{{ $errorId }}" @endif {{ $attributes->merge(['class' => 'block min-w-0 w-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 h-[92px]']) }}>{{ $attributes->get('value') }}</textarea>
+            <textarea name="{{ $name }}" id="{{ $inputId }}" @if($errorMsg) aria-invalid="true" aria-describedby="{{ $errorId }}" @endif {{ $attributes->merge(['class' => 'block min-w-0 w-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 h-[92px]']) }}>{{-- value="{{ }}" was already escaped once when passed in; decode so it is escaped exactly once here, or every save adds another &amp; --}}{{ html_entity_decode((string) $attributes->get('value'), ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</textarea>
         @else
             <input name="{{ $name }}" id="{{ $inputId }}" type="{{ $type }}" @if($errorMsg) aria-invalid="true" aria-describedby="{{ $errorId }}" @endif {{ $attributes->merge(['class' => ($type == 'file' ? 'opacity-0' : '') . ' block min-w-0 w-full h-full px-3 py-2 text-white text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6']) }}/>
         @endif

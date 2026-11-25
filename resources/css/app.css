@@ -53,6 +53,17 @@
 
 }
 
+/* Nav dropdown "scroll for more" fade: only on desktop, and only while the list has
+   more below (dropdowns.js toggles .has-more on .dropdown-scroll). */
+.dropdown-more {
+  display: none;
+}
+@media (width >= 48rem) {
+  .dropdown-scroll.has-more + .dropdown-more {
+    display: flex;
+  }
+}
+
 /* Mobile nav drawer: full-width, left-aligned tap targets (see mobile-nav.js). */
 .nav-mobile > a,
 .nav-mobile > form > button,

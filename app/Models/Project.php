@@ -45,11 +45,19 @@ class Project extends Model
     }
 
     /**
-     * Cached list of projects for the nav dropdown (rendered on every page).
+     * Cached list of projects for the nav dropdown (rendered on every page), most important first.
      */
     public static function navList()
     {
-        return Cache::remember('nav.projects', now()->addHours(6), fn () => static::all());
+        return Cache::remember('nav.projects', now()->addHours(6), fn () => static::ordered()->get());
+    }
+
+    /**
+     * Most important first (lowest sort_order), then oldest first for ties.
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort_order')->orderBy('id');
     }
 
     public function delete()
