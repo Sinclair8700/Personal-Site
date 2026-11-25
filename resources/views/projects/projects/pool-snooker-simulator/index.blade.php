@@ -1,4 +1,13 @@
-{{-- Write-up for /projects/pool-snooker-simulator. Renders below the project description. --}}
+{{-- Write-up for /projects/pool-snooker-simulator. Renders below the project description.
+     Screenshots are frames from the coursework demo video, in public/images/projects/pool-snooker-simulator/. --}}
+@php
+    $fig = function (string $name, int $w, int $h, string $alt, string $caption, string $max = '') {
+        $src = asset('images/projects/pool-snooker-simulator/'.$name.'.webp');
+        return '<figure class="my-2 flex flex-col gap-2 w-full '.$max.'">'
+            .'<img src="'.$src.'" width="'.$w.'" height="'.$h.'" alt="'.e($alt).'" loading="lazy" decoding="async" class="w-full h-auto rounded-lg">'
+            .'<figcaption class="text-sm text-white/60">'.e($caption).'</figcaption></figure>';
+    };
+@endphp
 <article class="text-white max-w-3xl mt-10 flex flex-col gap-4 leading-7
     [&_h2]:mt-6 [&_code]:bg-white/10 [&_code]:px-1 [&_code]:rounded [&_code]:text-[0.9em]
     [&_a]:underline [&_a:hover]:text-purple">
@@ -27,6 +36,7 @@
             and your opponent has to play from behind the baulk line.
         </li>
     </ul>
+    {!! $fig('start-menu', 940, 853, 'Start menu with game choice, player names, maximum cue power, Golden Pocket and Evil Pocket toggles, slipperiness and bounciness offsets, six pool foul toggles and the list of key binds', 'The start menu: game settings, the pool foul toggles and the controls.', 'max-w-xl') !!}
 
     <h2>The rules</h2>
     <p>Pool follows the English 8-ball rules I grew up playing. After every shot, once all the balls have stopped, the game checks:</p>
@@ -37,6 +47,7 @@
         <li><strong>Winning.</strong> Pot all your colour, then the black. Pot the black early, or foul while potting it, and your opponent wins.</li>
     </ul>
     <p>Fouls and wins are announced on screen, so new players can see why their opponent just got two visits.</p>
+    {!! $fig('win-screen', 1353, 1014, 'Top-down view of the pool table with the announcements Frank WON THE GAME and Foul: Potted the White, and the aiming guideline from the white ball', 'The end of a game: the winner is announced along with the foul that ended it.') !!}
 
     <h2>Golden Pocket and Evil Pocket</h2>
     <p>
@@ -62,6 +73,7 @@
         The randomness is the point. It opens up more possible games, so the game is harder to "solve" and takes
         longer to get boring.
     </p>
+    {!! $fig('golden-pocket', 1353, 1014, 'Top-down view mid-game with a gold pocket and a red pocket highlighted, and the announcements Frank is Red and Player 2 is Yellow, Golden Pocket: Free Ball', 'A pot into the gold pocket has just earned a free ball. The red pocket is the Evil Pocket.') !!}
 
     <h2>Playing a shot</h2>
     <p>
@@ -70,6 +82,7 @@
         matters on a screen, because you can't walk round the table to look. There are three cameras: above the
         table, down the cue, and a free camera.
     </p>
+    {!! $fig('cue-view', 1353, 1014, 'First-person cue camera looking along the textured cue at the white ball, with the red and yellow balls at the far end of the table', 'The cue camera, looking down the Blender-modelled cue.') !!}
     <div class="overflow-x-auto">
         <table class="w-full text-left text-sm border-collapse">
             <thead>
