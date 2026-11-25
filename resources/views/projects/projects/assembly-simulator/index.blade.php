@@ -43,6 +43,23 @@
         accounts, lessons with automatic checking, and the community area, in PHP and MySQL with jQuery and
         Bootstrap on the front end. Ten people tested it during development.
     </p>
+
+    <h2>Back online</h2>
+    <p>
+        In November 2026 I brought it back to life at
+        <a href="https://alexdavi.es/asm-sim/" target="_blank" rel="noopener">alexdavi.es/asm-sim</a>. It now runs
+        on PHP&nbsp;8.4. PHP 8.1 and later turn database errors into exceptions, so I switched that off to let
+        messages like "username taken" reach the page again. It reads its database login from a config file
+        outside the web root, and it refuses lesson names containing slashes or <code>..</code>, because those
+        names become file paths. The community area also has ten new example programs that show off each output:
+    </p>
+    {!! $fig('live-liftoff', 800, 500, 'The live simulator running the Liftoff example: assembly code on the left, T-MINUS on the text output, a rocket on the 20 by 20 display and the countdown on the seven-segment displays', 'The live site running "Liftoff!", which uses all three outputs at once.') !!}
+    <ul class="list-disc pl-6 flex flex-col gap-1">
+        <li><strong>Text output:</strong> Fibonacci Sequence, Prime Numbers (trial division with nested loops), and a Scrolling Marquee that wraps a long message through the 24 characters.</li>
+        <li><strong>20&times;20 display:</strong> Rainbow Stripes, an XOR Pattern built with AND, SHL, SHR and OR, a Smiley Face drawn from a 16&times;16 bitmap stored one 16-bit row per number, and a Bouncing Ball that leaves a colour-changing trail.</li>
+        <li><strong>7-segment displays:</strong> a 000&ndash;999 Counter and a HELLO Scroller made from segment letters.</li>
+        <li><strong>All three:</strong> Liftoff!, a countdown that ends with a rocket flying off the top of the display.</li>
+    </ul>
     <p>
         <x-button type="a" href="{{ $pdf }}" target="_blank" rel="noopener" class="inline-block !no-underline">
             Read the dissertation (PDF, 2.8&nbsp;MB)
