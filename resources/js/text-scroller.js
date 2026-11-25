@@ -1,21 +1,16 @@
-// if a text box is overflowing add padding on the right to prevent text from being cut off by scroll bar
+// Give scrollable text boxes some right padding when they overflow, so the scroll bar doesn't cover
+// the text (e.g. the description on project cards). Only elements that actually scroll are touched;
+// everything else keeps the padding its classes give it.
 function addPaddingToTextBoxes() {
     document.querySelectorAll('p, h2, h3, h4, h5, h6, span').forEach(textBox => {
-        let text = textBox.textContent;
-        let textHeight = textBox.scrollHeight;
-        let boxHeight = textBox.clientHeight;
-
-        if (boxHeight > 0 && textHeight > boxHeight) {
-            textBox.style.paddingRight = '16px';
-        }
-        else {
-            textBox.style.paddingRight = '0px';
+        const overflowY = getComputedStyle(textBox).overflowY;
+        if (overflowY !== 'auto' && overflowY !== 'scroll') {
+            return;
         }
 
+        textBox.style.paddingRight = textBox.scrollHeight > textBox.clientHeight ? '16px' : '';
     });
 }
 
 addPaddingToTextBoxes()
 window.addEventListener('resize', addPaddingToTextBoxes)
-
-
