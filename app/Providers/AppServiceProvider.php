@@ -27,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         View::share('title', 'No title');
 
         Gate::policy(Project::class, ProjectPolicy::class);
+        Gate::define('manage-cv', fn ($user) => $user->hasRole('admin'));
         config(['app.login_route' => 'account.sign-in']);
         config(['app.register_route' => 'account.sign-up']);
 

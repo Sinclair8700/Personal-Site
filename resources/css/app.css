@@ -53,6 +53,130 @@
 
 }
 
+/* ----------------------------------------------------------------------
+   CV page (/cv, resources/views/cv/show.blade.php)
+   ---------------------------------------------------------------------- */
+.cv-h {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-indigo-300);
+}
+.cv-h::before {
+  content: "";
+  width: 1.5rem;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--color-indigo-500), var(--color-fuchsia-400));
+}
+.cv-h::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgb(255 255 255 / 0.08);
+}
+.cv-prose {
+  color: rgb(255 255 255 / 0.78);
+  line-height: 1.65;
+}
+.cv-prose > * + * { margin-top: 0.75em; }
+.cv-prose ul { list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: 0.45em; }
+.cv-prose ul > li { position: relative; padding-left: 1.1em; }
+.cv-prose ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.1em;
+  top: 0.7em;
+  width: 0.4em;
+  height: 0.4em;
+  border-radius: 9999px;
+  background: var(--color-indigo-400);
+}
+.cv-prose ol { list-style: decimal; padding-left: 1.25em; }
+.cv-prose strong { color: #fff; font-weight: 600; }
+.cv-prose a,
+.cv-card-title a,
+.cv-org a { color: var(--color-indigo-300); text-decoration: underline; text-decoration-color: rgb(129 140 248 / 0.4); text-underline-offset: 3px; }
+.cv-prose a:hover,
+.cv-card-title a:hover,
+.cv-org a:hover { color: #fff; text-decoration-color: currentColor; }
+.cv-card-title a { color: #fff; text-decoration: none; }
+.cv-lead p:first-child { font-size: 1.125rem; color: rgb(255 255 255 / 0.9); }
+
+@media print {
+  @page { size: A4; margin: 10mm 12mm; }
+
+  body:has(.cv-page) > nav,
+  body:has(.cv-page) > header,
+  body:has(.cv-page) > a[href="#main"],
+  body:has(.cv-page) main > :not(.cv-page),
+  body:has(.cv-page) canvas,
+  .cv-actions,
+  .cv-blob { display: none !important; }
+
+  html:has(.cv-page),
+  body:has(.cv-page),
+  body:has(.cv-page) main { background: #fff !important; padding: 0 !important; }
+
+  .cv-page { font-size: 8.5pt; line-height: 1.38; color: #1f2937 !important; }
+  .cv-page .text-lg,
+  .cv-page .text-xl,
+  .cv-page .text-base { font-size: 10.5pt !important; line-height: 1.3 !important; }
+  .cv-page .text-sm,
+  .cv-page .text-xs { font-size: 8.4pt !important; }
+  .cv-lead p:first-child { font-size: inherit !important; }
+  .cv-prose { line-height: 1.4; }
+  .cv-prose > * + * { margin-top: 0.4em; }
+  .cv-prose ul { gap: 0.15em; }
+  .cv-prose li { break-inside: avoid; }
+  .cv-page .mt-2,
+  .cv-page .mt-3,
+  .cv-page .mt-4,
+  .cv-page .mt-5,
+  .cv-page .mt-6 { margin-top: 0.3rem !important; }
+  .cv-page .mt-7,
+  .cv-page .mt-10 { margin-top: 0.6rem !important; }
+  .cv-page * {
+    color: #1f2937 !important;
+    background: transparent !important;
+    border-color: #d1d5db !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  .cv-page .content-gutter { display: none; }
+  .cv-hero { border: 0 !important; border-bottom: 2px solid #4f46e5 !important; border-radius: 0 !important; padding: 0 0 4mm !important; }
+  .cv-name { -webkit-text-fill-color: #111827 !important; font-size: 22pt !important; line-height: 1.1 !important; }
+  .cv-page .cv-accent,
+  .cv-page .cv-accent a,
+  .cv-page .cv-h,
+  .cv-page .cv-contact svg { color: #3730a3 !important; }
+  .cv-h::before { background: #4f46e5 !important; }
+  .cv-h::after { background: #e5e7eb !important; }
+  .cv-dot { background: #4f46e5 !important; }
+  .cv-prose ul > li::before { background: #6366f1 !important; }
+  .cv-chip,
+  .cv-meta,
+  .cv-skill { padding: 0 !important; border: 0 !important; }
+  .cv-contact { margin-top: 3mm !important; column-gap: 5mm !important; }
+  .cv-skill-list { display: block !important; }
+  .cv-skill { display: inline; }
+  .cv-page h3:not(.cv-skill-area) { font-size: 10.5pt !important; line-height: 1.3 !important; }
+  .cv-timeline > .cv-entry:not(:first-child) { break-inside: avoid; }
+  .cv-skill:not(:last-child)::after { content: ","; margin-right: 0.3em; }
+  .cv-card { border: 0 !important; border-left: 2px solid #c7d2fe !important; border-radius: 0 !important; padding: 0 0 0 3mm !important; }
+  .cv-card { break-inside: avoid; }
+  .cv-card .cv-prose { font-size: 8pt !important; line-height: 1.32; }
+  .cv-h,
+  .cv-entry > div:first-child,
+  .cv-org { break-after: avoid; }
+  .cv-page a { text-decoration: none !important; }
+}
+
 /* Nav dropdown "scroll for more" fade: only on desktop, and only while the list has
    more below (dropdowns.js toggles .has-more on .dropdown-scroll). */
 .dropdown-more {

@@ -9,6 +9,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\CvController;
 
 Route::get('/', function () {
     return view('index', [
@@ -25,6 +26,13 @@ Route::controller(ProjectController::class)->group(function () {
     Route::get('/projects/{project}/edit', 'edit')->middleware('can:update,project')->name('projects.edit');
     Route::put('/projects/{project}', 'update')->middleware('can:update,project')->name('projects.update');
     Route::delete('/projects/{project}', 'destroy')->middleware('can:delete,project')->name('projects.destroy');
+});
+
+Route::controller(CvController::class)->group(function () {
+    Route::get('/cv', 'show')->name('cv.show');
+    Route::get('/cv/download.md', 'markdown')->name('cv.markdown');
+    Route::get('/cv/edit', 'edit')->middleware(['auth', 'can:manage-cv'])->name('cv.edit');
+    Route::put('/cv', 'update')->middleware(['auth', 'can:manage-cv'])->name('cv.update');
 });
 
 Route::get('/education', [EducationController::class, 'index'])->name('education.index');

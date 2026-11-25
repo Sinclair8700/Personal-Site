@@ -135,6 +135,8 @@
             </x-nav-dropdown>
             
             
+            <x-nav-link href="/cv" :active="request()->is('cv')" type="a">CV</x-nav-link>
+
             <x-nav-link href="/contact" :active="request()->is('contact')" type="a">Contact</x-nav-link>
 
             @auth
