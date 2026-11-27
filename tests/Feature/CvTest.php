@@ -86,3 +86,13 @@ it('includes the details from the older CVs', function () {
     (require database_path('migrations/2026_11_27_000002_add_older_cv_details_to_cv.php'))->up();
     expect(Cv::current()->data)->toBe($before);
 });
+
+it('lists Novus Expense among the CV projects, after ASM Sim & Learn', function () {
+    $titles = array_column(Cv::current()->entries('projects', false)['entries'], 'title');
+    $novus = array_search('[Novus Expense](https://alex-davies.com/projects/novus-expense)', $titles);
+
+    expect($novus)->not->toBeFalse()
+        ->and($titles[$novus - 1])->toContain('ASM Sim & Learn');
+
+    $this->get('/cv')->assertSee('Novus Expense');
+});
