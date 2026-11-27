@@ -5,6 +5,12 @@
 
     RewriteEngine On
 
+    # On the server this file is also the web root's .htaccess, and the app's
+    # own folders (Personal-Site, Personal-Site-copy) sit inside that web root.
+    # Never serve anything from them directly: the database, logs and source
+    # would otherwise be downloadable.
+    RewriteRule ^Personal-Site(-copy)?(/|$) - [F,L,NC]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
