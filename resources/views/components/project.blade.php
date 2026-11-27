@@ -4,6 +4,8 @@
     // image, e.g. the first card in a grid). In the homepage carousel every card
     // stays lazy so Swiper only fetches the slides in view.
     'eager' => false,
+    // How wide the card's image renders, for picking from the WebP srcset.
+    'sizes' => '(min-width: 768px) 50vw, 100vw',
 ])
 @php
     $images = $project?->images ?? collect();
@@ -22,10 +24,18 @@
                 <div class="swiper-wrapper">
                     @foreach($images as $image)
                     <div class="swiper-slide relative">
-                        <img src="{{ asset('storage/projects/'.$project->slug.'/'.$image->filename) }}"
+                        @php
+                            $img = \App\Support\ResponsiveImage::attributes('projects/'.$project->slug.'/'.$image->filename);
+                        @endphp
+                        <img src="{{ $img['src'] }}"
+                            @if($img['srcset']) srcset="{{ $img['srcset'] }}" sizes="{{ $sizes }}" @endif
                             alt="{{ $project->name ?? null }}"
                             class="w-full h-full object-cover rounded-t-md xs:rounded-t-none sm:rounded-r-md"
-                            loading="{{ $eager && $loop->first ? 'eager' : 'lazy' }}"
+                            @if($eager && $loop->first)
+                                loading="eager" fetchpriority="high"
+                            @else
+                                loading="lazy"
+                            @endif
                             decoding="async">
                         @if(!$loop->first)
                         <div class="swiper-lazy-preloader"></div>

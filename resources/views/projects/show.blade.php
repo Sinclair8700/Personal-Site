@@ -45,7 +45,11 @@
             @if($project->hasImages())
                 <div class="w-full md:w-1/2 lg:w-1/3 float-left mr-6 mb-4 space-y-4">
                     @foreach($project->images as $image)
-                        <img src="{{ asset('storage/projects/'.$project->slug.'/'.$image->filename) }}"
+                        @php
+                            $img = \App\Support\ResponsiveImage::attributes('projects/'.$project->slug.'/'.$image->filename);
+                        @endphp
+                        <img src="{{ $img['src'] }}"
+                            @if($img['srcset']) srcset="{{ $img['srcset'] }}" sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" @endif
                             alt="{{ $project->name }} screenshot {{ $loop->iteration }}"
                             {{-- The first screenshot is above the fold: load it straight away. --}}
                             loading="{{ $loop->first ? 'eager' : 'lazy' }}"

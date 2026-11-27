@@ -122,7 +122,7 @@
                             <h2 id="cv-skills" class="cv-h">Skills</h2>
                             <div class="mt-5 flex flex-col gap-5 print:gap-2.5">
                                 @foreach($skills as $group)
-                                    <div>
+                                    <div class="cv-skill-group">
                                         <h3 class="cv-skill-area text-xs font-semibold uppercase tracking-wider text-white/50">{{ $group['area'] }}</h3>
                                         <ul class="cv-skill-list mt-2 flex flex-wrap gap-1.5">
                                             @foreach($group['items'] as $skill)

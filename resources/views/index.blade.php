@@ -29,21 +29,23 @@
                 [&_.swiper-slide]:duration-300
                 [&_.swiper-slide]:ease-in-out
                 ">
-                    @foreach (\App\Models\Project::with('images')->get()->shuffle() as $project)
-                        @if(!$project->images->isNotEmpty())
-                            @continue
-                        @endif
+                    @foreach (\App\Models\Project::with('images')->get()->filter(fn ($p) => $p->images->isNotEmpty())->shuffle()->values() as $project)
                         @php
                             $primaryImage = $project->images->first();
+                            $img = \App\Support\ResponsiveImage::attributes('projects/'.$project->slug.'/'.$primaryImage->filename);
+                            // The first slide is the LCP image: fetch it straight away. Both layouts
+                            // below use the same sizes, so they resolve to one download.
+                            $first = $loop->first;
                         @endphp
                         <div class="swiper-slide    h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden overflow-visible">
-                            <x-project :project="$project" class="xs:inline hidden"/>
+                            <x-project :project="$project" :eager="$first" class="xs:inline hidden"/>
 
                             <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block xs:hidden border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
                                 <img
-                                    src="{{ asset('storage/projects/'.$project->slug.'/'.$primaryImage->filename) }}"
+                                    src="{{ $img['src'] }}"
+                                    @if($img['srcset']) srcset="{{ $img['srcset'] }}" sizes="(min-width: 768px) 50vw, 100vw" @endif
                                     alt="{{ $project->name }}"
-                                    loading="lazy"
+                                    @if($first) loading="eager" fetchpriority="high" @else loading="lazy" @endif
                                     decoding="async"
                                     class="w-full h-full object-cover">
                                 <div class="absolute top-0 bottom-0 left-0 right-0 bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300">
@@ -63,7 +65,8 @@
                 <h3>
                     Socials
                 </h3>
-                <ul class="list-disc list-inside">
+                {{-- inline-block + padding gives each link a 24px+ tap target (PageSpeed: touch targets). --}}
+                <ul class="list-disc list-inside [&_a]:inline-block [&_a]:py-1 [&_button]:inline-block [&_button]:py-1">
                     <li><button type="button" class="underline cursor-pointer copy-value text-left" data-value="alex_8700" aria-label="Copy Discord username alex_8700">Discord
                             <x-popover position="bottom">
                                 Click to copy alex_8700

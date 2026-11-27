@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ResponsiveImage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,7 +27,13 @@ class ProjectImage extends Model
 
     protected static function booted()
     {
+        // Resized WebP copies for srcset (see ResponsiveImage), made once on upload.
+        static::created(function (ProjectImage $image) {
+            ResponsiveImage::generate($image->path());
+        });
+
         static::deleting(function (ProjectImage $image) {
+            ResponsiveImage::delete($image->path());
             Storage::disk('public')->delete($image->path());
         });
     }

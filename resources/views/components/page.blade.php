@@ -79,12 +79,15 @@
         <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
         <meta name="theme-color" content="#000000">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+            {{-- Figtree is self-hosted (@font-face in app.css); preload it so text doesn't reflow late. --}}
+            @php
+                $fontUrl = Vite::asset('resources/fonts/figtree-latin-wght-normal.woff2');
+            @endphp
+            @if($fontUrl)
+                <link rel="preload" href="{{ $fontUrl }}" as="font" type="font/woff2" crossorigin>
+            @endif
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @else
             <style>
