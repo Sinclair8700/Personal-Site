@@ -204,6 +204,25 @@
   .cv-page a { text-decoration: none !important; }
 }
 
+/* Home page carousel before Swiper starts: lay the first slides out exactly as Swiper will
+   (one slide, two from md, 24px apart; see home.js) so nothing moves when it takes over. */
+.projects-carousel:not(.swiper-initialized) {
+  overflow: hidden;
+}
+.projects-carousel:not(.swiper-initialized) > .swiper-wrapper {
+  display: flex;
+}
+.projects-carousel:not(.swiper-initialized) > .swiper-wrapper > .swiper-slide {
+  flex-shrink: 0;
+  width: 100%;
+  margin-right: 24px;
+}
+@media (width >= 48rem) {
+  .projects-carousel:not(.swiper-initialized) > .swiper-wrapper > .swiper-slide {
+    width: calc((100% - 24px) / 2);
+  }
+}
+
 /* Nav dropdown "scroll for more" fade: only on desktop, and only while the list has
    more below (dropdowns.js toggles .has-more on .dropdown-scroll). */
 .dropdown-more {

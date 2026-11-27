@@ -23,10 +23,10 @@ it('makes WebP copies no wider than the original and builds a srcset from them',
     expect(ResponsiveImage::attributes('projects/demo/0.png'))
         ->toBe(['src' => asset('storage/projects/demo/0.png'), 'srcset' => null]);
 
-    expect(ResponsiveImage::generate('projects/demo/0.png'))->toBe(3)
+    expect(ResponsiveImage::generate('projects/demo/0.png'))->toBe(4)
         ->and(ResponsiveImage::generate('projects/demo/0.png'))->toBe(0);
 
-    foreach ([480, 960, 1200] as $width) {
+    foreach ([480, 640, 960, 1200] as $width) {
         $file = Storage::disk('public')->path("projects/demo/0-{$width}w.webp");
         expect(getimagesize($file)[0])->toBe($width)
             ->and(getimagesize($file)['mime'])->toBe('image/webp');
@@ -36,6 +36,7 @@ it('makes WebP copies no wider than the original and builds a srcset from them',
     expect($img['src'])->toBe(asset('storage/projects/demo/0-1200w.webp'))
         ->and($img['srcset'])->toBe(
             asset('storage/projects/demo/0-480w.webp').' 480w, '
+            .asset('storage/projects/demo/0-640w.webp').' 640w, '
             .asset('storage/projects/demo/0-960w.webp').' 960w, '
             .asset('storage/projects/demo/0-1200w.webp').' 1200w'
         );
@@ -79,6 +80,10 @@ it('self-hosts the font and loads the first carousel image straight away', funct
     // One project's image is eager and high priority (in both the wide and narrow layouts); the rest stay lazy.
     expect(substr_count($html, 'fetchpriority="high"'))->toBe(2)
         ->and(substr_count($html, 'loading="lazy"'))->toBeGreaterThan(2);
+
+    // The first two slides show before the carousel script runs.
+    expect(substr_count($html, 'swiper-slide swiper-slide-active '))->toBe(1)
+        ->and(substr_count($html, 'swiper-slide  swiper-slide-next '))->toBe(1);
 });
 
 it('preloads the self-hosted font from the Vite build', function () {

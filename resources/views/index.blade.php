@@ -37,13 +37,15 @@
                             // below use the same sizes, so they resolve to one download.
                             $first = $loop->first;
                         @endphp
-                        <div class="swiper-slide    h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden overflow-visible">
-                            <x-project :project="$project" :eager="$first" class="xs:inline hidden"/>
+                        {{-- The first two slides start out marked active/next (Swiper keeps these classes up to date
+                             once it starts), so they show before the JavaScript runs. app.css sizes them the way Swiper will. --}}
+                        <div class="swiper-slide {{ $loop->first ? 'swiper-slide-active' : '' }} {{ $loop->index === 1 ? 'swiper-slide-next' : '' }} h-full w-full [&:not(.swiper-slide-active)]:hidden md:[&:not(.swiper-slide-active,.swiper-slide-next)]:hidden overflow-visible">
+                            <x-project :project="$project" :eager="$first" sizes="(min-width: 768px) 50vw, calc(100vw - 3rem)" class="xs:inline hidden"/>
 
                             <a href="/projects/{{ $project->slug }}" class="relative w-full h-full block xs:hidden border-2 border-white transition-colors duration-300 focus-within:border-purple hover:border-purple rounded-md overflow-hidden">
                                 <img
                                     src="{{ $img['src'] }}"
-                                    @if($img['srcset']) srcset="{{ $img['srcset'] }}" sizes="(min-width: 768px) 50vw, 100vw" @endif
+                                    @if($img['srcset']) srcset="{{ $img['srcset'] }}" sizes="(min-width: 768px) 50vw, calc(100vw - 3rem)" @endif
                                     alt="{{ $project->name }}"
                                     @if($first) loading="eager" fetchpriority="high" @else loading="lazy" @endif
                                     decoding="async"
@@ -51,7 +53,11 @@
                                 <div class="absolute top-0 bottom-0 left-0 right-0 bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300">
                                     <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center text-xl font-semibold">{{ $project->name }}</span>
                                 </div>
-                                <div class="swiper-lazy-preloader"></div>
+                                {{-- No spinner on the eager first slide: it can finish loading before Swiper
+                                     starts listening, and the spinner would never be cleared. --}}
+                                @unless($first)
+                                    <div class="swiper-lazy-preloader"></div>
+                                @endunless
                             </a>
                         </div>
                     @endforeach

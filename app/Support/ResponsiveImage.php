@@ -8,13 +8,13 @@ use Throwable;
 /**
  * Smaller WebP copies of an image on the public disk, for srcset.
  *
- * projects/scenic-routes/0.png gets projects/scenic-routes/0-480w.webp, 0-960w.webp and
- * 0-1440w.webp next to it (never wider than the original). Views call attributes() and get
+ * projects/scenic-routes/0.png gets projects/scenic-routes/0-480w.webp, 0-640w.webp, 0-960w.webp
+ * and 0-1440w.webp next to it (never wider than the original). Views call attributes() and get
  * the WebP srcset when the copies exist, or the original when they don't.
  */
 class ResponsiveImage
 {
-    public const WIDTHS = [480, 960, 1440];
+    public const WIDTHS = [480, 640, 960, 1440];
 
     private const QUALITY = 80;
 
