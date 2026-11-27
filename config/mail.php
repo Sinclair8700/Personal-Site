@@ -113,4 +113,16 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Form Recipient
+    |--------------------------------------------------------------------------
+    |
+    | New messages from the contact form are emailed here. Leave it empty to
+    | only store them (they are always on the admin dashboard).
+    |
+    */
+
+    'contact_to' => env('MAIL_CONTACT_TO', 'me@alexdavi.es'),
+
 ];

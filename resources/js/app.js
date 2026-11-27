@@ -6,6 +6,7 @@ import './text-scroller';
 import './file-upload';
 import './popover';
 import './copy-value';
+import './contact-challenge';
 import './snow';
 import './gap-snake';
 import './project-image-swiper';
