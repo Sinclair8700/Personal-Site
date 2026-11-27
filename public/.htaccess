@@ -13,21 +13,29 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    # Other domains — alexdavi.es, alex-davies.co.uk and awdavies.co.uk (and
+    # their www) move permanently to alex-davies.com. Only the apex and www
+    # match, and /.well-known/ is left alone, so mail subdomains, mail
+    # autoconfig and certificate renewal on those domains carry on as before.
+    RewriteCond %{HTTP_HOST} ^(www\.)?(alexdavi\.es|alex-davies\.co\.uk|awdavies\.co\.uk)$ [NC]
+    RewriteCond %{REQUEST_URI} !^/\.well-known/
+    RewriteRule ^ https://alex-davies.com%{REQUEST_URI} [L,R=301]
+
     # Canonical origin — force HTTPS + non-www so every page has one indexable
     # URL. Gated on the production host so staging/local domains are untouched.
     # Keying HTTPS detection off X-Forwarded-Proto (not %{HTTPS}) avoids an
     # infinite redirect loop when TLS is terminated at a proxy like Cloudflare.
-    RewriteCond %{HTTP_HOST} (^|\.)alexdavi\.es$ [NC]
+    RewriteCond %{HTTP_HOST} (^|\.)alex-davies\.com$ [NC]
     RewriteCond %{HTTP:X-Forwarded-Proto} =http
-    RewriteRule ^ https://alexdavi.es%{REQUEST_URI} [L,R=301]
+    RewriteRule ^ https://alex-davies.com%{REQUEST_URI} [L,R=301]
 
-    RewriteCond %{HTTP_HOST} (^|\.)alexdavi\.es$ [NC]
+    RewriteCond %{HTTP_HOST} (^|\.)alex-davies\.com$ [NC]
     RewriteCond %{HTTP:X-Forwarded-Proto} ^$
     RewriteCond %{HTTPS} !=on
-    RewriteRule ^ https://alexdavi.es%{REQUEST_URI} [L,R=301]
+    RewriteRule ^ https://alex-davies.com%{REQUEST_URI} [L,R=301]
 
-    RewriteCond %{HTTP_HOST} ^www\.alexdavi\.es$ [NC]
-    RewriteRule ^ https://alexdavi.es%{REQUEST_URI} [L,R=301]
+    RewriteCond %{HTTP_HOST} ^www\.alex-davies\.com$ [NC]
+    RewriteRule ^ https://alex-davies.com%{REQUEST_URI} [L,R=301]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d

@@ -1,7 +1,7 @@
 <nav class="bg-black sm:fixed sm:top-0 w-full sm:z-50" >
     <x-content >
         <div class="flex h-16 items-center justify-between w-full gap-4">
-            <a href="/" class="text-white shrink-0">alexdavi.es</a>
+            <a href="/" class="text-white shrink-0">alex-davies.com</a>
 
             <!-- Desktop menu -->
             <div class="nav-desktop hidden md:block w-full ml-4">

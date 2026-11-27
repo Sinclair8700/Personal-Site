@@ -47,7 +47,7 @@
     <h2>Back online</h2>
     <p>
         In November 2026 I brought it back to life at
-        <a href="https://alexdavi.es/asm-sim/" target="_blank" rel="noopener">alexdavi.es/asm-sim</a>. It now runs
+        <a href="https://alex-davies.com/asm-sim/" target="_blank" rel="noopener">alex-davies.com/asm-sim</a>. It now runs
         on PHP&nbsp;8.4. PHP 8.1 and later turn database errors into exceptions, so I switched that off to let
         messages like "username taken" reach the page again. It reads its database login from a config file
         outside the web root, and it refuses lesson names containing slashes or <code>..</code>, because those
@@ -107,7 +107,7 @@
         interaction testing has been performed to iron out any bugs and make the site operate smoothly and securely
         with components useful to the learner. This project concludes that the missing piece in current forms of
         assembly education is user-to-user interactions. The outcome of this project can be seen in full at
-        <a href="https://alexdavi.es/asm-sim/" target="_blank" rel="noopener">Learn Assembler (alexdavi.es)</a>.
+        <a href="https://alex-davies.com/asm-sim/" target="_blank" rel="noopener">Learn Assembler (alex-davies.com)</a>.
         To use some of the functionality like completing lessons and viewing code submissions, registration and
         login are required.
     </p>
@@ -750,7 +750,7 @@
     </p>
     <p>
         I leave you the reader with this: The finished product
-        <a href="https://alexdavi.es/asm-sim/" target="_blank" rel="noopener">Learn Assembler (alexdavi.es)</a>.
+        <a href="https://alex-davies.com/asm-sim/" target="_blank" rel="noopener">Learn Assembler (alex-davies.com)</a>.
     </p>
 
     <h3 id="references">References</h3>
