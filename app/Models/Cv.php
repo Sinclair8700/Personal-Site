@@ -18,7 +18,7 @@ class Cv extends Model
     ];
 
     public const FIELDS = [
-        'name', 'headline', 'location', 'email', 'phone', 'website', 'github', 'extra',
+        'name', 'headline', 'location', 'email', 'phone', 'website', 'github', 'linkedin', 'extra',
         'profile', 'skills', 'experience', 'projects', 'education', 'interests',
     ];
 
@@ -111,6 +111,7 @@ class Cv extends Model
             $this->field('email'),
             $this->field('website'),
             $this->field('github'),
+            $this->field('linkedin'),
             $this->field('extra'),
         ]);
 

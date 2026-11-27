@@ -47,6 +47,7 @@ class CvController extends Controller
             'phone' => ['nullable', 'string', 'max:40'],
             'website' => ['nullable', 'url', 'max:255'],
             'github' => ['nullable', 'url', 'max:255'],
+            'linkedin' => ['nullable', 'url', 'max:255'],
             'extra' => ['nullable', 'string', 'max:160'],
             'profile' => ['nullable', 'string', 'max:5000'],
             'skills' => ['nullable', 'string', 'max:5000'],

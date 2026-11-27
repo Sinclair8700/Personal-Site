@@ -68,3 +68,21 @@ it('splits sections into entries with titles, organisations and dates', function
         ->org->toBe('Designamite Limited')
         ->meta->toBe('October 2022 to present');
 });
+
+it('includes the details from the older CVs', function () {
+    $cv = Cv::current();
+
+    expect($cv->field('linkedin'))->toContain('linkedin.com/in/')
+        ->and($cv->field('experience'))->toContain('Azure Active Directory')
+        ->and($cv->field('experience'))->toContain('adopted across the whole company')
+        ->and($cv->field('education'))->toContain('Robot Wars')
+        ->and($cv->field('interests'))->toContain('IT Ambassador')
+        ->and(collect($cv->skillGroups())->firstWhere('area', 'Data')['items'])->toContain('MSSQL');
+
+    $this->get('/cv')->assertOk()->assertSee('LinkedIn')->assertSee('I started coding at 12');
+
+    // Running the patch again changes nothing.
+    $before = Cv::current()->data;
+    (require database_path('migrations/2026_11_27_000002_add_older_cv_details_to_cv.php'))->up();
+    expect(Cv::current()->data)->toBe($before);
+});

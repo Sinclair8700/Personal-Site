@@ -30,13 +30,13 @@
                 <legend class="px-2 text-sm font-semibold uppercase tracking-wider text-indigo-300">Header</legend>
                 @foreach([
                     'name' => 'Name', 'headline' => 'Headline', 'location' => 'Location', 'email' => 'Email',
-                    'phone' => 'Phone', 'website' => 'Website', 'github' => 'GitHub', 'extra' => 'Extra (e.g. driving licence)',
+                    'phone' => 'Phone', 'website' => 'Website', 'github' => 'GitHub', 'linkedin' => 'LinkedIn', 'extra' => 'Extra (e.g. driving licence)',
                 ] as $key => $text)
                     <div class="flex flex-col gap-1">
                         <label for="cv-{{ $key }}" class="{{ $label }}">{{ $text }}</label>
                         <input id="cv-{{ $key }}" name="{{ $key }}" value="{{ $field($key) }}" class="{{ $input }}"
                             @if($key === 'name') required @endif
-                            @if($key === 'email') type="email" @elseif(in_array($key, ['website', 'github'])) type="url" @else type="text" @endif
+                            @if($key === 'email') type="email" @elseif(in_array($key, ['website', 'github', 'linkedin'])) type="url" @else type="text" @endif
                             @error($key) aria-invalid="true" @enderror>
                         @error($key)<p class="text-sm text-red-400">{{ $message }}</p>@enderror
                     </div>
