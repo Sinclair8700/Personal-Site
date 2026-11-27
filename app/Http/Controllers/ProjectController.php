@@ -23,7 +23,7 @@ class ProjectController extends Controller
             ->get();
         return view('projects.index', [
             'title' => 'Projects',
-            'description' => 'A portfolio of software projects by Alex Davies — web apps, game engines, simulators, embedded electronics and automation tools built in PHP, JavaScript, Python and C++.',
+            'description' => 'Software projects by Alex Davies: web apps, game engines, simulators, embedded electronics and automation tools built in PHP, JavaScript, Python and C++.',
             'projects' => $projects,
         ]);
     }
@@ -36,7 +36,9 @@ class ProjectController extends Controller
 
         return view('projects.show', [
             'title' => $project->name,
-            'description' => Str::limit(strip_tags($project->getRawOriginal('description') ?? ''), 155),
+            'description' => Str::limit(html_entity_decode(strip_tags($project->getRawOriginal('description') ?? '')), 155, '…', preserveWords: true),
+            // A project with no screenshots is only a stub, so keep it out of search results.
+            'noindex' => $project->images->isEmpty(),
             'image' => $primaryImage ? 'storage/projects/'.$project->slug.'/'.$primaryImage->filename : null,
             'project' => $project
         ]);

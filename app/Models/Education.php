@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Education extends Model
 {
@@ -20,6 +21,14 @@ class Education extends Model
     {
         static::saved(fn () => Cache::forget('nav.education'));
         static::deleted(fn () => Cache::forget('nav.education'));
+    }
+
+    /** The entry's photo, or the placeholder when it hasn't been uploaded (so crawlers don't hit a 404). */
+    public function imageUrl(): string
+    {
+        return $this->image && Storage::disk('public')->exists('education/'.$this->image)
+            ? asset('storage/education/'.$this->image)
+            : asset('images/education-placeholder.png');
     }
 
     /**

@@ -2,11 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>{{ url('/') }}</loc>
+        @if($projectsUpdated)<lastmod>{{ $projectsUpdated->toAtomString() }}</lastmod>@endif
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>{{ url('/projects') }}</loc>
+        @if($projectsUpdated)<lastmod>{{ $projectsUpdated->toAtomString() }}</lastmod>@endif
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
@@ -17,6 +19,7 @@
     </url>
     <url>
         <loc>{{ url('/cv') }}</loc>
+        @if($cvUpdated)<lastmod>{{ $cvUpdated->toAtomString() }}</lastmod>@endif
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -29,7 +32,7 @@
     @foreach ($projects as $project)
     <url>
         <loc>{{ url('/projects/' . $project->slug) }}</loc>
-        <lastmod>{{ $project->updated_at->toAtomString() }}</lastmod>
+        <lastmod>{{ $project->lastmod->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>

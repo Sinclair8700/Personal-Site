@@ -1,23 +1,35 @@
 @props([
     'title' => 'No title',
+    // The visible <h1>, when it should differ from the <title> (e.g. the home page).
+    'heading' => null,
     'description' => null,
     'image' => null,
     'noindex' => false,
+    // "profile" on pages that are about Alex himself (home, CV).
+    'ogType' => 'website',
 ])
 @php
     // Home passes a full, keyword-rich title; inner pages get the brand suffix.
-    // Computed once so <title>, meta title and OG/Twitter titles never drift.
+    // Computed once so <title> and the OG/Twitter titles never drift.
     // Titles can arrive already escaped (project names are HtmlStrings), so decode once
     // here and let {{ }} escape once below; otherwise "&" shows up as "&amp;".
     $plainTitle = html_entity_decode((string) $title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    $pageTitle = request()->is('/') ? $plainTitle : $plainTitle . ' | Alex Davies';
-    $metaDescription = $description ?: 'Software developer specializing in PHP, JavaScript, Python and C++. View my portfolio of projects including web applications, 3D CAD, and automation tools.';
+    $pageTitle = request()->is('/') || str_contains($plainTitle, 'Alex Davies') ? $plainTitle : $plainTitle . ' | Alex Davies';
+    $metaDescription = $description ?: 'Alex Davies is a full-stack software developer in Stoke-on-Trent, UK, building web apps, games and hardware projects in PHP, JavaScript, Python and C++.';
+    $defaultImage = 'images/og-alex-davies.png';
     $metaImage = $image
         ? (\Illuminate\Support\Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))
-        : asset('images/og-default.png');
+        : asset($defaultImage);
+
+    // Canonical URL from APP_URL and the path only: no query string, no other host.
+    $base = rtrim(config('app.url'), '/');
+    $path = trim(request()->path(), '/');
+    $canonical = $base.($path === '' ? '/' : '/'.$path);
+    $personId = $base.'/#person';
+    $websiteId = $base.'/#website';
 @endphp
 <!DOCTYPE html>
-<html id="html" class="h-[100vh] w-full m-0 " lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html id="html" class="h-[100vh] w-full m-0 " lang="en-GB">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,13 +42,12 @@
         @endif
 
         <!-- Primary Meta Tags -->
-        <meta name="title" content="{{ $pageTitle }}">
         <meta name="description" content="{{ $metaDescription }}">
         <meta name="author" content="Alex Davies">
 
         <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:type" content="{{ $ogType }}">
+        <meta property="og:url" content="{{ $canonical }}">
         <meta property="og:title" content="{{ $pageTitle }}">
         <meta property="og:description" content="{{ $metaDescription }}">
         <meta property="og:image" content="{{ $metaImage }}">
@@ -47,17 +58,21 @@
         @endunless
         <meta property="og:site_name" content="Alex Davies">
         <meta property="og:locale" content="en_GB">
+        @if($ogType === 'profile')
+            <meta property="profile:first_name" content="Alex">
+            <meta property="profile:last_name" content="Davies">
+        @endif
 
         <!-- Twitter -->
-        <meta property="twitter:card" content="summary_large_image">
-        <meta property="twitter:url" content="{{ url()->current() }}">
-        <meta property="twitter:title" content="{{ $pageTitle }}">
-        <meta property="twitter:description" content="{{ $metaDescription }}">
-        <meta property="twitter:image" content="{{ $metaImage }}">
-        <meta property="twitter:image:alt" content="{{ $pageTitle }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $pageTitle }}">
+        <meta name="twitter:description" content="{{ $metaDescription }}">
+        <meta name="twitter:image" content="{{ $metaImage }}">
+        <meta name="twitter:image:alt" content="{{ $pageTitle }}">
 
-        <!-- Canonical URL -->
-        <link rel="canonical" href="{{ url()->current() }}" />
+        @unless($noindex)
+            <link rel="canonical" href="{{ $canonical }}" />
+        @endunless
 
         <!-- Icons -->
         <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
@@ -77,41 +92,59 @@
             </style>
         @endif
         @php
-            $personLd = [
-                '@context' => 'https://schema.org',
+            // One linked graph so search engines see a single "Alex Davies" entity behind
+            // the site. Other pages point at it with ['@id' => url('/').'/#person'].
+            $person = [
                 '@type' => 'Person',
+                '@id' => $personId,
                 'name' => 'Alex Davies',
-                'url' => url('/'),
-                'jobTitle' => 'Software Developer',
+                'givenName' => 'Alex',
+                'familyName' => 'Davies',
+                'url' => $base.'/',
+                'jobTitle' => 'Full-Stack Software Developer',
+                'worksFor' => [
+                    ['@type' => 'Organization', 'name' => 'Designamite'],
+                    ['@type' => 'Organization', 'name' => '21cs', 'url' => 'https://21cs.co.uk'],
+                ],
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressLocality' => 'Stoke-on-Trent',
+                    'addressRegion' => 'Staffordshire',
+                    'addressCountry' => 'GB',
+                ],
+                'hasCredential' => [
+                    '@type' => 'EducationalOccupationalCredential',
+                    'credentialCategory' => 'degree',
+                    'name' => 'BSc (Hons) Computer Science, First Class Honours',
+                    'recognizedBy' => ['@type' => 'CollegeOrUniversity', 'name' => 'Keele University'],
+                ],
+                'knowsAbout' => ['PHP', 'Laravel', 'JavaScript', 'TypeScript', 'Python', 'C++', 'SQL', 'Linux', 'Web development', 'Software engineering'],
                 'sameAs' => [
                     'https://github.com/Sinclair8700',
                     'https://www.linkedin.com/in/alex-davies-aa10a7215/',
                 ],
-                'knowsAbout' => ['PHP', 'JavaScript', 'Python', 'C++', 'Web Development', 'Software Engineering'],
             ];
-            // Build alumniOf from the education entries (uses the cached nav list,
-            // which is already loaded for the nav dropdown — no extra query).
+            // alumniOf from the education entries (the cached nav list, already loaded for the nav dropdown).
             $alumniOf = \App\Models\Education::navList()
                 ->map(fn ($e) => array_filter([
-                    '@type' => 'EducationalOrganization',
+                    '@type' => str_contains($e->name, 'University') ? 'CollegeOrUniversity' : 'EducationalOrganization',
                     'name' => $e->name,
                     'sameAs' => $e->link ?: null,
                 ]))
                 ->values()
                 ->all();
-            if (!empty($alumniOf)) {
-                $personLd['alumniOf'] = $alumniOf;
+            if (! empty($alumniOf)) {
+                $person['alumniOf'] = $alumniOf;
+            }
+            $graph = [
+                $person,
+                ['@type' => 'WebSite', '@id' => $websiteId, 'url' => $base.'/', 'name' => 'Alex Davies', 'inLanguage' => 'en-GB', 'publisher' => ['@id' => $personId]],
+            ];
+            if ($ogType === 'profile') {
+                $graph[] = ['@type' => 'ProfilePage', 'url' => $canonical, 'name' => $pageTitle, 'mainEntity' => ['@id' => $personId], 'isPartOf' => ['@id' => $websiteId]];
             }
         @endphp
-        <script type="application/ld+json">{!! json_encode($personLd, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "name": "Alex Davies",
-            "url": "{{ url('/') }}"
-        }
-        </script>
+        <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@graph' => $graph], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
     </head>
     <body id="body" class="font-sans antialiased dark:bg-black dark:text-white/50 h-full w-full m-0 flex flex-col relative sm:pt-16">
         <!--FOUC fix-->
@@ -152,17 +185,28 @@
         </x-nav>
         <header class="bg-gray-200 py-4 shadow-md">
             <x-content type="wide">
-                <h1 class="tracking-tight text-gray-900">{{ html_entity_decode($title) }}</h1>
+                <h1 class="tracking-tight text-gray-900">{{ $heading ?? html_entity_decode($title) }}</h1>
             </x-content>
         </header>
         <main id="main" tabindex="-1" class=" min-w-full bg-black flex-[100%] gap-snake
-        
-        
+
+
         ">
             {{ $slot }}
             <div class="bg-none my-6 w-full flex items-center justify-center">
                 <span class="text-white">Visitors: {{ \App\Models\PageVisit::uniqueVisitorCount() }}</span>
             </div>
         </main>
+        <footer class="bg-black border-t border-white/10 text-sm text-white/70">
+            <div class="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p><span class="text-white">Alex Davies</span> · Full-stack software developer · Stoke-on-Trent, UK</p>
+                <ul class="flex gap-4">
+                    <li><a class="underline hover:text-white" href="/cv">CV</a></li>
+                    <li><a class="underline hover:text-white" href="https://github.com/Sinclair8700" target="_blank" rel="me noopener">GitHub</a></li>
+                    <li><a class="underline hover:text-white" href="https://www.linkedin.com/in/alex-davies-aa10a7215/" target="_blank" rel="me noopener">LinkedIn</a></li>
+                    <li><a class="underline hover:text-white" href="/contact">Contact</a></li>
+                </ul>
+            </div>
+        </footer>
     </body>
 </html>

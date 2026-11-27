@@ -21,7 +21,7 @@ class ContactController extends Controller
     {
         return view('contact.index', [
             'title' => 'Contact',
-            'description' => 'Get in touch with Alex Davies, software developer — about work, collaboration, or just to say hello.',
+            'description' => 'Get in touch with Alex Davies, a full-stack software developer in Stoke-on-Trent, about work, a project or just to say hello.',
             'challenge' => ContactChallenge::issue(),
         ]);
     }

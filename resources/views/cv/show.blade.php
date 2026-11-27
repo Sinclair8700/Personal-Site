@@ -24,7 +24,7 @@
     $education = $cv->entries('education');
     $skills = $cv->skillGroups();
 @endphp
-<x-page :title="$title" :description="$description ?? null">
+<x-page :title="$title" :heading="$heading ?? null" :description="$description ?? null" og-type="profile">
     <div class="cv-page text-white">
         <x-content type="medium" class="py-10 print:py-0">
 
@@ -36,7 +36,7 @@
                 <div class="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                     <div>
                         <p class="cv-accent text-xs font-semibold uppercase tracking-[0.25em] text-indigo-300">Curriculum vitae</p>
-                        <h2 class="cv-name mt-2 bg-gradient-to-r from-white via-white to-indigo-300 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl">{{ $cv->field('name') }}</h2>
+                        <p class="cv-name mt-2 bg-gradient-to-r from-white via-white to-indigo-300 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl">{{ $cv->field('name') }}</p>
                         @if($cv->field('headline'))
                             <p class="mt-2 text-lg text-white/80 md:text-xl">{{ $cv->field('headline') }}</p>
                         @endif

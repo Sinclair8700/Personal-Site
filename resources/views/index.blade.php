@@ -1,4 +1,4 @@
-<x-page :title="$title" :description="$description ?? null">
+<x-page :title="$title" :heading="$heading ?? null" :description="$description ?? null" og-type="profile">
     <x-content class="h-full flex flex-col gap-6 py-6">
 
         <x-slot name="leftGutter" class="snow">
@@ -6,9 +6,10 @@
         <x-slot name="rightGutter" class="snow">
         </x-slot>
 
-        <div class="w-full">
-            <h2 class="text-white mb-4">Hi! You've found my site :)</h2>
-            <p class="text-white/70 max-w-2xl">This is my personal corner of the internet where I keep track of and show off my projects. I'm a full-stack software developer working in PHP, JavaScript, Python and C++ — building web apps, game engines, simulators, embedded electronics and automation tools.</p>
+        <div class="w-full flex flex-col gap-3 text-white/70 max-w-2xl [&_a]:underline [&_a:hover]:text-white">
+            <h2 class="text-white mb-1">Hi, I'm Alex Davies :)</h2>
+            <p>I'm a full-stack software developer in Stoke-on-Trent. I have a First in Computer Science from Keele University, and since 2022 I've worked at Designamite, where I lead development for FibreNest, Persimmon Homes' fibre broadband business. On the side I build websites and online shops for local businesses through <a href="https://21cs.co.uk" target="_blank" rel="noopener">21cs</a>.</p>
+            <p>This is my corner of the internet, where I keep track of and show off my projects: web apps, game engines, simulators, embedded electronics and automation tools in PHP, JavaScript, Python and C++. You can also <a href="/cv">read my CV</a> or <a href="/contact">get in touch</a>.</p>
         </div>
         <div class="w-full">
             <h2 class="text-white mb-4">Projects</h2>
@@ -46,7 +47,7 @@
                                     decoding="async"
                                     class="w-full h-full object-cover">
                                 <div class="absolute top-0 bottom-0 left-0 right-0 bg-black/50 hover:bg-transparent hover:opacity-0 transition-all duration-300">
-                                    <h2 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center">{{ $project->name }}</h2>
+                                    <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center text-xl font-semibold">{{ $project->name }}</span>
                                 </div>
                                 <div class="swiper-lazy-preloader"></div>
                             </a>

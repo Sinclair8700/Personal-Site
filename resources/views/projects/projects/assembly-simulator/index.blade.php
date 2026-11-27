@@ -14,7 +14,7 @@
         '@context' => 'https://schema.org',
         '@type' => 'Thesis',
         'name' => '8-Bit Assembler Learning Tool and Community',
-        'author' => ['@type' => 'Person', 'name' => 'Alex Davies'],
+        'author' => ['@id' => rtrim(config('app.url'), '/').'/#person', '@type' => 'Person', 'name' => 'Alex Davies'],
         'datePublished' => '2022-04',
         'inSupportOf' => 'BSc Computer Science',
         'sourceOrganization' => ['@type' => 'CollegeOrUniversity', 'name' => 'Keele University'],
@@ -31,7 +31,7 @@
     <h2>About the project</h2>
     <p>
         ASM Sim &amp; Learn was my final-year project for my BSc in Computer Science at Keele University
-        (module CSC-30014, 2021&ndash;22). It is a small computer that runs in the browser, with lessons that teach
+        (module CSC-30014, 2021-22). It is a small computer that runs in the browser, with lessons that teach
         assembly language one step at a time and a community area where people post, rate and run each other's
         programs.
     </p>
@@ -57,7 +57,7 @@
     <ul class="list-disc pl-6 flex flex-col gap-1">
         <li><strong>Text output:</strong> Fibonacci Sequence, Prime Numbers (trial division with nested loops), and a Scrolling Marquee that wraps a long message through the 24 characters.</li>
         <li><strong>20&times;20 display:</strong> Rainbow Stripes, an XOR Pattern built with AND, SHL, SHR and OR, a Smiley Face drawn from a 16&times;16 bitmap stored one 16-bit row per number, and a Bouncing Ball that leaves a colour-changing trail.</li>
-        <li><strong>7-segment displays:</strong> a 000&ndash;999 Counter and a HELLO Scroller made from segment letters.</li>
+        <li><strong>7-segment displays:</strong> a 000 to 999 Counter and a HELLO Scroller made from segment letters.</li>
         <li><strong>All three:</strong> Liftoff!, a countdown that ends with a rocket flying off the top of the display.</li>
     </ul>
     <p>
@@ -84,11 +84,11 @@
             <li><a href="#previous-work">Overview of previous work</a></li>
             <li><a href="#aims">Aims &amp; objectives</a></li>
             <li><a href="#plan">The plan and data model</a></li>
-            <li><a href="#prototype-1">Prototype 1 &ndash; Interface design</a></li>
-            <li><a href="#prototype-2">Prototype 2 &ndash; User login</a></li>
-            <li><a href="#prototype-3">Prototype 3 &ndash; Community posts</a></li>
-            <li><a href="#prototype-4">Prototype 4 &ndash; User interface and computer section</a></li>
-            <li><a href="#prototype-5">Prototype 5 &ndash; Creation of lessons</a></li>
+            <li><a href="#prototype-1">Prototype 1: Interface design</a></li>
+            <li><a href="#prototype-2">Prototype 2: User login</a></li>
+            <li><a href="#prototype-3">Prototype 3: Community posts</a></li>
+            <li><a href="#prototype-4">Prototype 4: User interface and computer section</a></li>
+            <li><a href="#prototype-5">Prototype 5: Creation of lessons</a></li>
             <li><a href="#testing">Testing &amp; results</a></li>
             <li><a href="#evaluation">Evaluation</a></li>
             <li><a href="#conclusion">Conclusion</a></li>
@@ -310,7 +310,7 @@
         <li>
             Validate all user input forms of data between the host and server
             <ol class="list-[lower-alpha]">
-                <li>Host validation &ndash; Javascript</li>
+                <li>Host validation: Javascript</li>
             </ol>
         </li>
     </ol>
@@ -422,7 +422,7 @@
         appeared in my project poster to showcase the project before the UI was finalised.
     </p>
 
-    <h3 id="prototype-2">Prototype 2 &ndash; User Login</h3>
+    <h3 id="prototype-2">Prototype 2: User Login</h3>
     <p>
         Prototype 2's goal was to create the login system between the Javascript of the site and PHP and SQL on the
         server. The functionality of this prototype was tested by both the project's author and 3 users.
@@ -473,7 +473,7 @@
         appears.
     </p>
 
-    <h3 id="prototype-3">Prototype 3 &ndash; Community Posts</h3>
+    <h3 id="prototype-3">Prototype 3: Community Posts</h3>
     <h4>Creation</h4>
     <p>
         On the computer page of the site, the post button is made available to the user if they are not currently
@@ -526,7 +526,7 @@
     <h4>Validation</h4>
     <p>If the Name or Description is too long or short the user is notified before they can submit it.</p>
 
-    <h3 id="prototype-4">Prototype 4 &ndash; Implementation of User Interface and Computer Section</h3>
+    <h3 id="prototype-4">Prototype 4: Implementation of User Interface and Computer Section</h3>
     <h4>Instruction buttons and popovers</h4>
     <p>
         For each instruction available to the computer there is a popover that will explain what the instruction
@@ -584,7 +584,7 @@
         lower registers, but it would add unnecessary complexity.
     </p>
 
-    <h3 id="prototype-5">Prototype 5 &ndash; Creation of Lessons</h3>
+    <h3 id="prototype-5">Prototype 5: Creation of Lessons</h3>
     <p>
         Having the ability to add lessons to the project as an admin allows the site to continue expanding the
         areas of teaching within assembly language far after the end of this project.
@@ -756,7 +756,7 @@
     <h3 id="references">References</h3>
     <ul class="flex flex-col gap-2 text-sm leading-6 break-words">
         <li>Ethics.csc.ncsu.edu. 2022. <em>Ethics in Computing - Reverse Engineering.</em> [online] Available at: <a href="https://ethics.csc.ncsu.edu/intellectual/reverse/study.php" target="_blank" rel="noopener">https://ethics.csc.ncsu.edu/intellectual/reverse/study.php</a> [Accessed 12 April 2022].</li>
-        <li>Locke, E. A., Shaw, K. N., Saari, L. M., &amp; Latham, G. P. (1981). Goal setting and task performance: 1969&ndash;1980. <em>Psychological Bulletin, 90</em>(1), 125&ndash;152. <a href="https://doi.org/10.1037/0033-2909.90.1.125" target="_blank" rel="noopener">https://doi.org/10.1037/0033-2909.90.1.125</a></li>
+        <li>Locke, E. A., Shaw, K. N., Saari, L. M., &amp; Latham, G. P. (1981). Goal setting and task performance: 1969-1980. <em>Psychological Bulletin, 90</em>(1), 125-152. <a href="https://doi.org/10.1037/0033-2909.90.1.125" target="_blank" rel="noopener">https://doi.org/10.1037/0033-2909.90.1.125</a></li>
         <li>Stefanheule.com. 2022. <em>How Many x86-64 Instructions Are There Anyway?</em> [online] Available at: <a href="https://stefanheule.com/blog/how-many-x86-64-instructions-are-there-anyway/" target="_blank" rel="noopener">https://stefanheule.com/blog/how-many-x86-64-instructions-are-there-anyway/</a> [Accessed 12 April 2022].</li>
         <li>McLeod, S. A. (2018, May 21). <em>Maslow's hierarchy of needs.</em> Retrieved from <a href="https://www.simplypsychology.org/maslow.html" target="_blank" rel="noopener">https://www.simplypsychology.org/maslow.html</a></li>
         <li>Filgona, J., Sakiyo, J., Gwany, D. and Okoronka, A., 2020. Motivation in Learning. <em>Asian Journal of Education and Social Studies</em>, pp.16-37.</li>

@@ -19,7 +19,7 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Other domains — alexdavi.es, alex-davies.co.uk and awdavies.co.uk (and
+    # Other domains: alexdavi.es, alex-davies.co.uk and awdavies.co.uk (and
     # their www) move permanently to alex-davies.com. Only the apex and www
     # match, and /.well-known/ is left alone, so mail subdomains, mail
     # autoconfig and certificate renewal on those domains carry on as before.
@@ -27,7 +27,7 @@
     RewriteCond %{REQUEST_URI} !^/\.well-known/
     RewriteRule ^ https://alex-davies.com%{REQUEST_URI} [L,R=301]
 
-    # Canonical origin — force HTTPS + non-www so every page has one indexable
+    # Canonical origin: force HTTPS + non-www so every page has one indexable
     # URL. Gated on the production host so staging/local domains are untouched.
     # Keying HTTPS detection off X-Forwarded-Proto (not %{HTTPS}) avoids an
     # infinite redirect loop when TLS is terminated at a proxy like Cloudflare.
@@ -42,6 +42,12 @@
 
     RewriteCond %{HTTP_HOST} ^www\.alex-davies\.com$ [NC]
     RewriteRule ^ https://alex-davies.com%{REQUEST_URI} [L,R=301]
+
+    # /index.php and /index.php/anything are the same pages as / and /anything;
+    # send them to the clean URL so only one version gets indexed.
+    RewriteCond %{HTTP_HOST} ^alex-davies\.com$ [NC]
+    RewriteCond %{THE_REQUEST} \s/index\.php [NC]
+    RewriteRule ^index\.php(/.*)?$ https://alex-davies.com$1 [R=301,L,NC]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -62,7 +68,7 @@
 </IfModule>
 
 # ----------------------------------------------------------------------
-# Compression — shrink text assets (HTML, CSS, JS, JSON, XML, SVG) on the wire.
+# Compression: shrink text assets (HTML, CSS, JS, JSON, XML, SVG) on the wire.
 # Brotli preferred where available, gzip/deflate as a fallback.
 # ----------------------------------------------------------------------
 <IfModule mod_brotli.c>
@@ -77,7 +83,7 @@
 </IfModule>
 
 # ----------------------------------------------------------------------
-# Browser caching — long lifetimes for static assets, none for dynamic pages.
+# Browser caching: long lifetimes for static assets, none for dynamic pages.
 # ----------------------------------------------------------------------
 <IfModule mod_expires.c>
     ExpiresActive On
@@ -98,7 +104,7 @@
 
 <IfModule mod_headers.c>
     # Vite content-hashes build assets (e.g. app-CcuFr1CF.css), so a given URL's
-    # bytes never change — safe to cache forever. A new build = a new filename.
+    # bytes never change, so they are safe to cache forever. A new build = a new filename.
     <FilesMatch "-[A-Za-z0-9_-]{8}\.(css|js|png|jpe?g|webp|avif|svg|woff2?)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
     </FilesMatch>

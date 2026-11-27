@@ -33,7 +33,7 @@
                     <dd class="text-white text-right font-medium">{{ $visitorTrend->sum('count') }}</dd>
                     <dt class="text-white/60">Busiest day</dt>
                     <dd class="text-white text-right font-medium">
-                        {{ $visitorPeak && $visitorPeak['count'] > 0 ? $visitorPeak['label'].' ('.$visitorPeak['count'].')' : '—' }}
+                        {{ $visitorPeak && $visitorPeak['count'] > 0 ? $visitorPeak['label'].' ('.$visitorPeak['count'].')' : 'None' }}
                     </dd>
                 </dl>
                 <p class="text-white/40 text-xs mt-3">Hover a bar for a day&rsquo;s detail &middot; click to pin it.</p>

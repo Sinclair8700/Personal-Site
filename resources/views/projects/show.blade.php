@@ -1,4 +1,4 @@
-<x-page :title="$title" :description="$description ?? null" :image="$image ?? null">
+<x-page :title="$title" :description="$description ?? null" :image="$image ?? null" :noindex="$noindex ?? false">
     @php
         $description = $description ?? null;
         $image = $image ?? null;
@@ -12,8 +12,8 @@
             '@context' => 'https://schema.org',
             '@type' => $isRepo ? 'SoftwareSourceCode' : 'CreativeWork',
             'name' => $projectName,
-            'url' => url()->current(),
-            'author' => ['@type' => 'Person', 'name' => 'Alex Davies'],
+            'url' => url('/projects/'.$project->slug),
+            'author' => ['@id' => rtrim(config('app.url'), '/').'/#person'],
         ];
         if ($project->updated_at) { $projectLd['dateModified'] = $project->updated_at->toAtomString(); }
         if ($description) { $projectLd['abstract'] = $description; }
@@ -29,7 +29,7 @@
             'itemListElement' => [
                 ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
                 ['@type' => 'ListItem', 'position' => 2, 'name' => 'Projects', 'item' => url('/projects')],
-                ['@type' => 'ListItem', 'position' => 3, 'name' => $projectName, 'item' => url()->current()],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $projectName, 'item' => url('/projects/'.$project->slug)],
             ],
         ];
     @endphp
@@ -46,8 +46,10 @@
                 <div class="w-full md:w-1/2 lg:w-1/3 float-left mr-6 mb-4 space-y-4">
                     @foreach($project->images as $image)
                         <img src="{{ asset('storage/projects/'.$project->slug.'/'.$image->filename) }}"
-                            alt="{{ $project->name }} — screenshot {{ $loop->iteration }}"
-                            loading="lazy"
+                            alt="{{ $project->name }} screenshot {{ $loop->iteration }}"
+                            {{-- The first screenshot is above the fold: load it straight away. --}}
+                            loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                            @if($loop->first) fetchpriority="high" @endif
                             decoding="async"
                             class="w-full h-auto object-cover rounded-lg">
                     @endforeach

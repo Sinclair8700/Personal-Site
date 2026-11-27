@@ -13,8 +13,9 @@ use App\Http\Controllers\CvController;
 
 Route::get('/', function () {
     return view('index', [
-        'title' => 'Alex Davies — Software Developer',
-        'description' => 'Alex Davies is a full-stack software developer working in PHP, JavaScript, Python and C++. Explore my portfolio of web apps, game engines, embedded electronics and automation projects.',
+        'title' => 'Alex Davies | Full-Stack Software Developer in Stoke-on-Trent',
+        'heading' => 'Alex Davies',
+        'description' => 'Alex Davies is a full-stack software developer in Stoke-on-Trent, UK, with a First in Computer Science from Keele University. See my projects and CV.',
     ]);
 })->name('index');
 

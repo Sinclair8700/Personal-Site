@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Education;
+use Illuminate\Support\Facades\Storage;
 use function Pest\Laravel\get;
 
 it('shows education on education index page', function () {
@@ -20,11 +21,21 @@ it('shows project details on projects index page', function () {
 });
 
 it('shows education images on education index page', function () {
+    Storage::fake('public');
     $education = Education::all();
     foreach ($education as $education) {
+        Storage::disk('public')->put('education/'.$education->image, 'image');
         get(route('education.index'))
             ->assertSeeInOrder(['<a', '<img', $education->image, '</a>'], false);
     }
+});
+
+it('shows the placeholder instead of a missing education image', function () {
+    Storage::fake('public');
+
+    get(route('education.index'))
+        ->assertSee('images/education-placeholder.png', false)
+        ->assertDontSee('storage/education/', false);
 });
 
 it('shows the education title on the education show page', function () {

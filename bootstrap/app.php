@@ -14,11 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Trust the proxy's X-Forwarded-Proto/Host (e.g. Cloudflare) so
-        // url()->current(), asset() and the canonical/OG tags resolve to https
-        // and the real host instead of the internal http request. Narrow `at`
-        // to Cloudflare's published IP ranges if the origin is publicly reachable.
-        $middleware->trustProxies(at: '*');
+        // Apache serves the site directly (no proxy or CDN in front), so only a
+        // proxy on this machine may set X-Forwarded-* headers. Trusting every
+        // address let any visitor fake their IP (dodging the contact form rate
+        // limit) and their host (poisoning canonical URLs). If a CDN is added
+        // later, list its published IP ranges here.
+        $middleware->trustProxies(at: ['127.0.0.1', '::1']);
 
         $middleware->appendToGroup('web', RecordPageVisit::class);
         $middleware->appendToGroup('web', SecurityHeaders::class);

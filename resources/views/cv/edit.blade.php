@@ -8,9 +8,9 @@
     $sections = [
         'profile' => ['Profile', 8, 'Paragraphs separated by a blank line. Markdown links work: [text](https://…).'],
         'skills' => ['Skills', 9, 'One group per line: "Area: item, item, item". Commas inside brackets stay with their item.'],
-        'experience' => ['Experience', 24, 'Each job starts with "### Role — Company", then a line with the dates, then a blank line and the text or "- " bullets. **bold** and links work.'],
+        'experience' => ['Experience', 24, 'Each job starts with "### Role | Company", then a line with the dates, then a blank line and the text or "- " bullets. **bold** and links work.'],
         'projects' => ['Selected projects', 18, 'Optional intro line, then each project as "### [Name](link)" followed by a short description.'],
-        'education' => ['Education', 12, 'Same as experience: "### Course — Place", a dates line, then bullets.'],
+        'education' => ['Education', 12, 'Same as experience: "### Course | Place", a dates line, then bullets.'],
         'interests' => ['Interests', 4, 'A short paragraph.'],
     ];
 @endphp

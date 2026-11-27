@@ -21,7 +21,7 @@ class EducationController extends Controller
 
         return view('education.show', [
             'title' => $education->name,
-            'description' => Str::limit(strip_tags($education->description ?? ''), 155),
+            'description' => Str::limit(html_entity_decode(strip_tags($education->description ?? '')), 155, '…', preserveWords: true),
             'education' => $education
         ]);
     }

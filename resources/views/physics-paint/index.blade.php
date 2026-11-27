@@ -13,6 +13,5 @@
             <x-button id="start-button">Start</x-button>
         </div>
     </x-content>
+    @vite('resources/js/physics-paint.js')
 </x-page>
-
-@vite('resources/js/physics-paint.js')

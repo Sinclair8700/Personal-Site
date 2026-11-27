@@ -18,8 +18,9 @@ class CvController extends Controller
         $isAdmin = Gate::allows('manage-cv');
 
         return view('cv.show', [
-            'title' => 'CV',
-            'description' => Str::limit(strip_tags(Cv::markdown($cv->field('profile'))), 155),
+            'title' => 'Alex Davies CV | Full-Stack Software Developer, Stoke-on-Trent',
+            'heading' => 'Alex Davies CV',
+            'description' => 'The CV of Alex Davies, a full-stack software developer in Stoke-on-Trent with a First in Computer Science from Keele University, at Designamite since 2022.',
             'cv' => $cv,
             'isAdmin' => $isAdmin,
             // The phone number only shows publicly when switched on; admins always see it,
@@ -74,6 +75,8 @@ class CvController extends Controller
         return response($cv->toMarkdown($includePhone), 200, [
             'Content-Type' => 'text/markdown; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            // The /cv page is the version to index, not this download.
+            'X-Robots-Tag' => 'noindex',
         ]);
     }
 }

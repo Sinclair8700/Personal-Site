@@ -8,6 +8,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -28,6 +29,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::share('title', 'No title');
+
+        // Build every absolute URL (canonical, sitemap, Open Graph, JSON-LD) from
+        // APP_URL rather than the request, so other hosts and /index.php paths
+        // can't become canonical.
+        if ($this->app->isProduction()) {
+            URL::forceRootUrl(config('app.url'));
+            URL::forceScheme('https');
+        }
 
         Gate::policy(Project::class, ProjectPolicy::class);
         Gate::define('manage-cv', fn ($user) => $user->hasRole('admin'));

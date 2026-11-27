@@ -66,5 +66,5 @@ it('splits sections into entries with titles, organisations and dates', function
     expect($experience['entries'][0])
         ->title->toBe('Full-stack Developer')
         ->org->toBe('Designamite Limited')
-        ->meta->toBe('October 2022 – present');
+        ->meta->toBe('October 2022 to present');
 });

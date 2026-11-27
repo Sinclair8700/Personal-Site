@@ -6,20 +6,19 @@
             'itemListElement' => [
                 ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
                 ['@type' => 'ListItem', 'position' => 2, 'name' => 'Education', 'item' => url('/education')],
-                ['@type' => 'ListItem', 'position' => 3, 'name' => $education->name, 'item' => url()->current()],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $education->name, 'item' => url('/education/'.$education->slug)],
             ],
         ];
     @endphp
     <script type="application/ld+json">{!! json_encode($breadcrumbLd, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
     <x-content type="wide" class="py-6 text-white">
         <div class="max-w-3xl mx-auto flex flex-col gap-4">
-            <img src="{{ asset('storage/education/'.$education->image) }}"
+            <img src="{{ $education->imageUrl() }}"
                 alt="{{ $education->name }}"
-                class="w-full max-w-2xl h-auto rounded-lg"
-                onerror="this.onerror=null;this.src='{{ asset('images/education-placeholder.png') }}';">
+                class="w-full max-w-2xl h-auto rounded-lg">
             <div class="flex flex-col gap-1">
                 <p class="text-white/70">{{ $education->location }}</p>
-                <p class="text-white/70">{{ $education->start_date->format('M Y') }} &ndash; {{ $education->end_date->format('M Y') }}</p>
+                <p class="text-white/70">{{ $education->start_date->format('M Y') }} to {{ $education->end_date->format('M Y') }}</p>
             </div>
             <p>{{ $education->description }}</p>
             @if($education->link)

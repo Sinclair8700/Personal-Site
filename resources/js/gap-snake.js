@@ -30,7 +30,7 @@ class GapSnake {
 
         // Animation + effects state
         this.frame = 0;
-        this.clock = 0;          // frame-rate–independent time (advances ~1 per 60fps frame)
+        this.clock = 0;          // frame-rate-independent time (advances ~1 per 60fps frame)
         this._lastT = 0;
         this._posHist = [];      // recent positions, for stuck detection
         this._loopHist = [];     // down-sampled positions, for loop/confinement detection
@@ -656,7 +656,7 @@ class GapSnake {
     }
 
     pickRoamWaypoint() {
-        // Trust findInterestingWaypoint's gap prioritisation — diving into narrow gaps is
+        // Trust findInterestingWaypoint's gap prioritisation: diving into narrow gaps is
         // the whole point of a gap snake. Just skip targets that are in a no-go zone, too
         // close (would make it orbit) or sharply behind us (would make it coil). Take the
         // first good one so gaps aren't passed over in favour of distant open space.
@@ -685,7 +685,7 @@ class GapSnake {
 
     findEscapeTarget() {
         // Find a far, OPEN point (few obstacles around it) that isn't near a spot we
-        // just got stuck in — somewhere with room to breathe, to break a bounce loop.
+        // just got stuck in, somewhere with room to breathe, to break a bounce loop.
         const margin = 20;
         let best = null;
         for (let i = 0; i < 60; i++) {
@@ -717,7 +717,7 @@ class GapSnake {
             }
         }
 
-        // Frame-rate–independent time step (baseline 60fps) so the snake travels at
+        // Frame-rate-independent time step (baseline 60fps) so the snake travels at
         // the same real-world pace on 60Hz and 120Hz displays instead of racing.
         const nowT = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
         let dt = this._lastT ? (nowT - this._lastT) / 16.667 : 1;
@@ -734,7 +734,7 @@ class GapSnake {
         }
         
         // Pick a new waypoint periodically or if we don't have one (but never override
-        // an in-progress escape — that's what keeps it from being pulled back into a gap).
+        // an in-progress escape; that's what keeps it from being pulled back into a gap).
         if (this.escapeTimer <= 0 && (!this.snake.targetWaypoint || this.snake.waypointTimer === 0)) {
             this.snake.targetWaypoint = this.pickRoamWaypoint();
             this.snake.waypointTimer = this.snake.waypointRefreshTime; // MUCH longer - ~10 seconds per waypoint
@@ -793,7 +793,7 @@ class GapSnake {
         }
 
         // Confinement / boredom: the 1-second check above only catches hard bounces. This
-        // catches the slower failure — gliding back and forth in a wide corridor, or looping
+        // catches the slower failure: gliding back and forth in a wide corridor, or looping
         // in one area, for a long time while the rest of the page goes unexplored. We compare
         // total distance travelled against net progress over a ~7s window: lots of travel but
         // little net movement means we're going nowhere, so force a relocation to open space.
@@ -871,7 +871,7 @@ class GapSnake {
 
         // If we've genuinely got stuck (e.g. bouncing in a dead-end gap), remember this
         // spot as a no-go zone, then flee toward a far OPEN area and commit to it long
-        // enough to actually leave — instead of sliding along the gap and being pulled
+        // enough to actually leave, instead of sliding along the gap and being pulled
         // straight back (which is what caused the back-and-forth twitching).
         if (this.snake.stuckCounter > 18 && this.escapeTimer <= 0) {
             this.avoidZones.push({ x: this.snake.x, y: this.snake.y, until: this.clock + 360 });
@@ -888,7 +888,7 @@ class GapSnake {
         let desired;
         if (this.escapeTimer > 0) {
             this.escapeTimer -= dt;
-            // Head straight for the open escape target (no weave — take the way out).
+            // Head straight for the open escape target (no weave, take the way out).
             const et = this.escapeTarget;
             desired = et ? Math.atan2(et.y - this.snake.y, et.x - this.snake.x) : heading;
         } else if (this._curious) {
@@ -905,7 +905,7 @@ class GapSnake {
         }
 
         // Obstacle avoidance: if the desired way isn't clear, slide toward the nearest
-        // heading that is — so it hugs edges and corners instead of ricocheting off them.
+        // heading that is, so it hugs edges and corners instead of ricocheting off them.
         if (clearDist(desired) < probe) {
             let best = desired, bestScore = -Infinity;
             for (let deg = 12; deg <= 165; deg += 12) {
@@ -1118,8 +1118,8 @@ class GapSnake {
 }
 
 // Initialize gap snake effect on all elements with gap-snake class.
-// The snake is a purely decorative, constantly-moving background — exactly the
-// kind of motion prefers-reduced-motion is meant to suppress — so skip it there.
+// The snake is a purely decorative, constantly-moving background, exactly the
+// kind of motion prefers-reduced-motion is meant to suppress, so skip it there.
 document.addEventListener('DOMContentLoaded', () => {
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         return;

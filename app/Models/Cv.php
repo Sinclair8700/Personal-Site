@@ -65,7 +65,7 @@ class Cv extends Model
     }
 
     /**
-     * Splits a section on "### " headings. Each entry: heading split on " — " into title and org,
+     * Splits a section on "### " headings. Each entry: heading split on " | " into title and org,
      * an optional one-line meta (the dates line straight under the heading) and the Markdown body.
      *
      * @return array{intro: string, entries: array<int, array{title: string, org: ?string, meta: ?string, body: string}>}
@@ -88,7 +88,8 @@ class Cv extends Model
                 $rest = ltrim(substr($rest, strlen($m[0])));
             }
 
-            $split = preg_split('/\s+[—–]\s+/u', $heading, 2);
+            // " | " separates title and org; an em or en dash is still accepted from older CV text.
+            $split = preg_split('/\s+[|\x{2014}\x{2013}]\s+/u', $heading, 2);
 
             $entries[] = [
                 'title' => $split[0],
