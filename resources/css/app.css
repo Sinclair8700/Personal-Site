@@ -113,6 +113,7 @@
 
   body:has(.cv-page) > nav,
   body:has(.cv-page) > header,
+  body:has(.cv-page) footer,
   body:has(.cv-page) > a[href="#main"],
   body:has(.cv-page) main > :not(.cv-page),
   body:has(.cv-page) canvas,
